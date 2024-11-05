@@ -57,7 +57,7 @@ export interface ListResponseData<T> {
 /**
  * 基础返回
  */
-interface BaseResponse{
+interface BaseResponse {
   /**
    * 状态码
    * 200为成功
@@ -72,24 +72,27 @@ interface BaseResponse{
 /**
  * 列表返回
  */
-export interface ListResponse<T> extends BaseResponse { 
+export interface ListResponse<T> extends BaseResponse {
   data?: ListResponseData<T>;
 }
 /**
  * 详情返回
  */
-export interface DetailResponse<T> extends BaseResponse { 
+export interface DetailResponse<T> extends BaseResponse {
   data?: T;
 }
+
+const baseUrl = import.meta.env.VITE_BASE_API;
+
 export async function fetchGetList<T>(
   api: string,
   data?: Record<string, any>
 ): Promise<ListResponse<T>> {
-  return await fetchGet(api, data);
+  return await fetchGet(baseUrl + api, data);
 }
 export async function fetchGetDetail<T>(
   api: string,
   data?: Record<string, any>
 ): Promise<DetailResponse<T>> {
-  return await fetchGet(api, data);
+  return await fetchGet(baseUrl + api, data);
 }

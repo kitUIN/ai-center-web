@@ -122,7 +122,7 @@ function CheckHeader(item: NavRouterItem) {
 export const App = (props: Partial<NavDrawerProps>) => {
   const styles = useStyles();
   const location = useLocation();
-
+  
   const [openCategories, setOpenCategories] = React.useState<NavItemValue[]>([
     "6",
     "11",
