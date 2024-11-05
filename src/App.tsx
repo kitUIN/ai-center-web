@@ -8,9 +8,10 @@ import {
   NavItem,
   NavItemValue,
   NavSectionHeader,
+  OnNavItemSelectData,
 } from "@fluentui/react-nav-preview";
 import { Tooltip, makeStyles, tokens } from "@fluentui/react-components";
-import { useLocation, useRoutes } from "react-router-dom";
+import { useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { useEffect } from "react";
 import { NavRouterItem, navItems } from "./utils/NavItems";
 const useStyles = makeStyles({
@@ -44,6 +45,7 @@ function CheckHeader(item: NavRouterItem) {
 export const App = (props: Partial<NavDrawerProps>) => {
   const styles = useStyles();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [openCategories, setOpenCategories] = React.useState<NavItemValue[]>([
     "6",
@@ -53,15 +55,22 @@ export const App = (props: Partial<NavDrawerProps>) => {
     string | undefined
   >("home");
   const [selectedValue, setSelectedValue] = React.useState<string>("home");
-
+  const handleItemSelect = (
+    ev: Event | React.SyntheticEvent<Element, Event>,
+    data: OnNavItemSelectData
+  ) => {
+    setSelectedCategoryValue(data.value as string);
+    setSelectedValue(data.value as string);
+    navigate(data.value as string);
+  };
   const MyRoutes = () => {
     return useRoutes(navItems);
   };
   useEffect(() => {
     navItems.forEach((item) => {
       if (item.path === location.pathname) {
-        setSelectedCategoryValue(item.key);
-        setSelectedValue(item.key);
+        setSelectedCategoryValue(item.path);
+        setSelectedValue(item.path);
       }
     });
   }, []);
@@ -75,7 +84,7 @@ export const App = (props: Partial<NavDrawerProps>) => {
         // defaultOpenCategories={['6']}
         // multiple={isMultiple}
         // onNavCategoryItemToggle={handleCategoryToggle}
-        // onNavItemSelect={handleItemSelect}
+        onNavItemSelect={handleItemSelect}
         openCategories={openCategories}
         selectedValue={selectedValue}
         selectedCategoryValue={selectedCategoryValue}
@@ -95,11 +104,7 @@ export const App = (props: Partial<NavDrawerProps>) => {
           {navItems.map((item) => (
             <>
               {CheckHeader(item)}
-              <NavItem
-                key={item.key}
-                icon={item.icon}
-                value={item.key}
-              >
+              <NavItem key={item.key} icon={item.icon} value={item.path}>
                 {item.name}
               </NavItem>
             </>
