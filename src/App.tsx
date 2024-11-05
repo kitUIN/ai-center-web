@@ -19,6 +19,8 @@ const useStyles = makeStyles({
     overflow: "hidden",
     display: "flex",
     height: "100vh",
+    width: "100%",
+    backgroundColor: "#FAFAFA",
   },
   content: {
     flex: "1",
