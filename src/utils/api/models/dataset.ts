@@ -1,4 +1,4 @@
-import { BaseModel } from "./base";
+import { BaseModel } from "./Base";
 /**
  * 数据集
  * @link https://github.com/kitUIN/AiCenter/blob/master/center/models/dataset.py
