@@ -8,13 +8,11 @@ import {
   NavItem,
   NavItemValue,
   NavSectionHeader,
-  OnNavItemSelectData,
 } from "@fluentui/react-nav-preview";
-import { 
+import {
   Tooltip,
   makeStyles,
   tokens,
-  useId,
 } from "@fluentui/react-components";
 import {
   Board20Filled,
@@ -29,14 +27,18 @@ import {
   PersonLightbulb20Regular,
   bundleIcon,
 } from "@fluentui/react-icons";
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home'
-import About from './pages/About'
+import {
+  useLocation,
+  useRoutes,
+} from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import { useEffect } from "react";
 const useStyles = makeStyles({
   root: {
     overflow: "hidden",
     display: "flex",
-    height: "600px",
+    height: "100vh",
   },
   content: {
     flex: "1",
@@ -53,7 +55,6 @@ const useStyles = makeStyles({
     gridRowGap: tokens.spacingVerticalS,
   },
 });
-
 const Dashboard = bundleIcon(Board20Filled, Board20Regular);
 const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 const EmployeeSpotlight = bundleIcon(
@@ -62,10 +63,65 @@ const EmployeeSpotlight = bundleIcon(
 );
 const Interviews = bundleIcon(People20Filled, People20Regular);
 const TrainingPrograms = bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular);
-
- 
+type NavRouterItem = {
+  key: string;
+  path: string;
+  name: string;
+  header: string | null;
+  element: React.ReactNode;
+  icon: any;
+};
+const navItems: NavRouterItem[] = [
+  {
+    key: "home",
+    name: "看板",
+    header: null,
+    icon: <Dashboard />,
+    path: "/",
+    element: <Home />,
+  },
+  {
+    key: "about",
+    name: "数据集",
+    header: null,
+    path: "/about",
+    icon: <Announcements />,
+    element: <About />,
+  },
+  {
+    key: "train_task",
+    name: "训练任务",
+    header: null,
+    path: "/train/task",
+    icon: <EmployeeSpotlight />,
+    element: <About />,
+  },
+  {
+    key: "model_config",
+    name: "模型配置",
+    header: "模型",
+    path: "/model/config",
+    icon: <Interviews />,
+    element: <About />,
+  },
+  {
+    key: "model_power",
+    name: "模型能力",
+    header: null,
+    path: "/model/power",
+    icon: <TrainingPrograms />,
+    element: <About />,
+  },
+];
+function CheckHeader(item: NavRouterItem) {
+  if (item.header !== null) {
+    return <NavSectionHeader>{item.header}</NavSectionHeader>;
+  }
+  return <></>;
+}
 export const App = (props: Partial<NavDrawerProps>) => {
   const styles = useStyles();
+  const location = useLocation();
 
   const [openCategories, setOpenCategories] = React.useState<NavItemValue[]>([
     "6",
@@ -73,108 +129,64 @@ export const App = (props: Partial<NavDrawerProps>) => {
   ]);
   const [selectedCategoryValue, setSelectedCategoryValue] = React.useState<
     string | undefined
-  >("6");
-  const [selectedValue, setSelectedValue] = React.useState<string>("7");
-  const [isMultiple, setIsMultiple] = React.useState(true);
+  >("home");
+  const [selectedValue, setSelectedValue] = React.useState<string>("home");
 
-  const handleCategoryToggle = (
-    ev: Event | React.SyntheticEvent<Element, Event>,
-    data: OnNavItemSelectData
-  ) => {
-    if (data.value === undefined && data.categoryValue) {
-      // we're just opening it,
-      setOpenCategories([data.categoryValue as string]);
-    }
-
-    if (isMultiple) {
-      // if it's already open, remove it from the list
-      if (openCategories.includes(data.categoryValue as string)) {
-        setOpenCategories([
-          ...openCategories.filter(
-            (category) => category !== data.categoryValue
-          ),
-        ]);
-      } else {
-        // otherwise add it
-        setOpenCategories([...openCategories, data.categoryValue as string]);
+  const MyRoutes = () => {
+    return useRoutes(navItems);
+  };
+  useEffect(() => {
+    navItems.forEach((item) => {
+      if (item.path === location.pathname) {
+        setSelectedCategoryValue(item.key);
+        setSelectedValue(item.key);
       }
-    } else {
-      // if it's already open, remove it from the list
-      if (openCategories.includes(data.categoryValue as string)) {
-        setOpenCategories([]);
-      } else {
-        // otherwise add it
-        setOpenCategories([data.categoryValue as string]);
-      }
-    }
-  };
-
-  const handleItemSelect = (
-    ev: Event | React.SyntheticEvent<Element, Event>,
-    data: OnNavItemSelectData
-  ) => {
-    setSelectedCategoryValue(data.categoryValue as string);
-    setSelectedValue(data.value as string);
-  };
-
-  const renderHamburgerWithToolTip = () => {
-    return (
-      <Tooltip content="Navigation" relationship="label">
-        <Hamburger />
-      </Tooltip>
-    );
-  };
-
- 
-
+    });
+  }, []);
   return (
     <div className={styles.root}>
       <NavDrawer
         // This a controlled example,
         // so don't use these props
-        // defaultSelectedValue="7"
+        // defaultSelectedValue="1"
         // defaultSelectedCategoryValue="6"
         // defaultOpenCategories={['6']}
         // multiple={isMultiple}
-        onNavCategoryItemToggle={handleCategoryToggle}
-        onNavItemSelect={handleItemSelect}
+        // onNavCategoryItemToggle={handleCategoryToggle}
+        // onNavItemSelect={handleItemSelect}
         openCategories={openCategories}
         selectedValue={selectedValue}
         selectedCategoryValue={selectedCategoryValue}
         type={"inline"}
         open={true}
       >
-        <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
+        <NavDrawerHeader>
+          <Tooltip content="Navigation" relationship="label">
+            <Hamburger />
+          </Tooltip>
+        </NavDrawerHeader>
 
         <NavDrawerBody>
           {/* <AppItem icon={<PersonCircle32Regular />} as="a">
             Contoso HR
           </AppItem> */}
-          <NavItem href="/" icon={<Dashboard />} value="1">
-            看板
-          </NavItem>
-          <NavItem href="/about" icon={<Announcements />} value="2">
-            数据集
-          </NavItem>
-          <NavItem icon={<EmployeeSpotlight />} value="3">
-            训练任务
-          </NavItem>
-          <NavSectionHeader>模型</NavSectionHeader>
-           
-          <NavItem icon={<Interviews />} value="4">
-            模型配置
-          </NavItem>
-          <NavItem icon={<TrainingPrograms />} value="5">
-            模型能力
-          </NavItem>
+          {navItems.map((item) => (
+            <>
+              {CheckHeader(item)}
+              <NavItem
+                key={item.key}
+                href={item.path}
+                icon={item.icon}
+                value={item.key}
+              >
+                {item.name}
+              </NavItem>
+            </>
+          ))}
+          
         </NavDrawerBody>
       </NavDrawer>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-		</BrowserRouter> 
+      <MyRoutes />
     </div>
   );
 };
