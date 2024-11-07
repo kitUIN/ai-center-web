@@ -2,7 +2,7 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import DataSetCard from "../components/DataSetCard";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { datasetList } from "../utils/api/DataSet";
  
 const useStyles = makeStyles({
@@ -18,12 +18,12 @@ const useStyles = makeStyles({
 });
 export const DataSetPage = () => {
   const styles = useStyles();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const datasetQuery = useQuery({ queryKey: ['datasets'], queryFn: datasetList });
   return (
     <div className={styles.cardContainer}>
       {datasetQuery.data?.data?.data?.map((dataset) => (
-          <DataSetCard
+          <DataSetCard key={dataset.id}
           title={dataset.name}
           description={dataset.description}
           progress={`${dataset.finished_task_number}/${dataset.task_number}`}

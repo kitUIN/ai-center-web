@@ -46,9 +46,15 @@ const useStyles = makeStyles({
     width: "360px",
     maxWidth: "100%",
     height: "fit-content",
-    cursor: "pointer",
+    cursor: "pointer", 
+    borderRadius: '10px',
+    padding:"14px 20px"
   },
-
+  moreButton: { 
+    '&:hover': {
+      backgroundColor: '#d5dbed',
+    },
+  },
   flex: {
     gap: "4px",
     display: "flex",
@@ -127,7 +133,7 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
             <Menu>
               <MenuTrigger disableButtonEnhancement>
                 <Tooltip content="更多操作" relationship="label">
-                  <Button
+                  <Button className={styles.moreButton}
                     onClick={handleMenuClick}
                     appearance="transparent"
                     icon={<MoreHorizontalFilled />}

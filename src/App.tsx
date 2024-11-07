@@ -60,7 +60,7 @@ export const App = (props: Partial<NavDrawerProps>) => {
   >("home");
   const [selectedValue, setSelectedValue] = React.useState<string>("home");
   const handleItemSelect = (
-    ev: Event | React.SyntheticEvent<Element, Event>,
+    _: Event | React.SyntheticEvent<Element, Event>,
     data: OnNavItemSelectData
   ) => {
     setSelectedCategoryValue(data.value as string);
@@ -77,10 +77,10 @@ export const App = (props: Partial<NavDrawerProps>) => {
         setSelectedValue(item.path);
       }
     });
-  }, []);
+  }, [location.pathname]);
   return (
     <div className={styles.root}>
-      <NavDrawer
+      <NavDrawer style={{width:"400px"}}
         // This a controlled example,
         // so don't use these props
         // defaultSelectedValue="1"
