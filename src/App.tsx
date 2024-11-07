@@ -80,7 +80,8 @@ export const App = (props: Partial<NavDrawerProps>) => {
   }, [location.pathname]);
   return (
     <div className={styles.root}>
-      <NavDrawer style={{width:"400px"}}
+      <NavDrawer
+        style={{ width: "400px" }}
         // This a controlled example,
         // so don't use these props
         // defaultSelectedValue="1"
@@ -106,12 +107,12 @@ export const App = (props: Partial<NavDrawerProps>) => {
             Contoso HR
           </AppItem> */}
           {navItems.map((item) => (
-            <>
+            <React.Fragment key={item.key}>
               {CheckHeader(item)}
               <NavItem key={item.key} icon={item.icon} value={item.path}>
                 {item.name}
               </NavItem>
-            </>
+            </React.Fragment>
           ))}
         </NavDrawerBody>
       </NavDrawer>
