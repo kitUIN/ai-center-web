@@ -1,15 +1,12 @@
-import * as React from "react";
 import {
   makeStyles,
   Button,
   Caption1,
   Text,
   tokens,
-  Subtitle1,
   Body1,
   mergeClasses,
   PresenceBadge,
-  CardFooter,
   Tooltip,
   MenuTrigger,
   MenuPopover,
@@ -18,28 +15,17 @@ import {
   MenuList,
 } from "@fluentui/react-components";
 import {
-  AlertUrgent16Filled,
-  Attach16Regular,
-  CheckmarkCircle16Regular,
+  CalendarDateFilled,
   CheckmarkCircleFilled,
-  CircleHalfFill16Regular,
-  Comment16Regular,
-  EditFilled,
   ErrorCircleFilled,
   HistoryFilled,
   LightbulbFilamentFilled,
   MoreHorizontal20Regular,
-  Open16Regular,
 } from "@fluentui/react-icons";
-import { Card, CardHeader, CardPreview } from "@fluentui/react-components";
+import { Card, CardHeader } from "@fluentui/react-components";
+import DataSetCard from "../components/DataSetCard";
 
-const resolveAsset = (asset: string) => {
-  const ASSET_URL =
-    "https://raw.githubusercontent.com/microsoft/fluentui/master/packages/react-components/react-card/stories/src/assets/";
-
-  return `${ASSET_URL}${asset}`;
-};
-
+ 
 const useStyles = makeStyles({
   main: {
     gap: "36px",
@@ -76,27 +62,26 @@ const useStyles = makeStyles({
     flexDirection: "row",
     alignItems: "center",
   },
-
+  
+  footerDateTime: { 
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   labels: { gap: "6px" },
 
   footer: { gap: "12px", justifyContent: "space-between" },
   caption: {
+    display: "block",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
     color: tokens.colorNeutralForeground3,
   },
 
   text: { margin: "0" },
 });
-
-const Title = ({ children }: React.PropsWithChildren<{}>) => {
-  const styles = useStyles();
-
-  return (
-    <Subtitle1 as="h4" block className={styles.title}>
-      {children}
-    </Subtitle1>
-  );
-};
-
+ 
 export const About = () => {
   const styles = useStyles();
 
@@ -111,7 +96,12 @@ export const About = () => {
               </>
             }
             description={
-              <Caption1 className={styles.caption}>这是测试项目</Caption1>
+              <Tooltip content="进行中" relationship="label">
+                                <div style={{"width":"230px"}}>
+                <Caption1 className={styles.caption}>这是测试项目122222222222222222222222222222222222222222222222222222222222222222222222222222222</Caption1>
+                </div>
+                </Tooltip>
+
             }
             action={
               <div className={styles.flex}>
@@ -157,47 +147,38 @@ export const About = () => {
               <Body1>0</Body1>
             </div>
             <div>
-              <div className={styles.flex}>
-                <HistoryFilled primaryFill="#6B6860" />
+              
+              <Tooltip content="创建时间" relationship="label">
+              <div className={styles.footerDateTime}>
+                <CalendarDateFilled primaryFill="#6B6860" fontSize={18}/>
                 <Text>2024-11-05 14:22:20</Text>
               </div>
-
-              <div className={styles.flex}>
-                <EditFilled primaryFill="#6B6860" />
-                <Text color="#6B6860">2024-11-05 16:22:20</Text>
+                </Tooltip>
+                <Tooltip content="更新时间" relationship="label">
+              <div className={styles.footerDateTime}>
+              <HistoryFilled primaryFill="#6B6860" fontSize={18} />
+              <Text color="#6B6860">2024-11-05 16:22:20</Text>
               </div>
+                </Tooltip>
+ 
             </div>
           </footer>
         </Card>
       </section>
 
       <section className={styles.section}>
-        <Title>'horizontal'</Title>
-        <p>With image as part of preview</p>
-
-        <Card className={styles.card} orientation="horizontal">
-          <CardPreview className={styles.horizontalCardImage}>
-            <img
-              className={styles.horizontalCardImage}
-              src={resolveAsset("app_logo.svg")}
-              alt="App Name Document"
-            />
-          </CardPreview>
-
-          <CardHeader
-            header={<Text weight="semibold">App Name</Text>}
-            description={
-              <Caption1 className={styles.caption}>Developer</Caption1>
-            }
-            action={
-              <Button
-                appearance="transparent"
-                icon={<MoreHorizontal20Regular />}
-                aria-label="More options"
-              />
-            }
-          />
-        </Card>
+        <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={()=>{alert("测试跳转")}}
+      />
       </section>
     </div>
   );

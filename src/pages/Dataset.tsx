@@ -1,226 +1,95 @@
-import * as React from "react";
-import {
-  FolderRegular,
-  EditRegular,
-  OpenRegular,
-  DocumentRegular,
-  PeopleRegular,
-  DocumentPdfRegular,
-  VideoRegular,
-} from "@fluentui/react-icons";
-import {
-  PresenceBadgeStatus,
-  Avatar,
-  DataGridBody,
-  DataGridRow,
-  DataGrid,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridCell,
-  TableCellLayout,
-  TableColumnDefinition,
-  createTableColumn,
+import { 
   makeStyles,
-  Card,
-  CardHeader,
-  Body1,
-  Caption1,
 } from "@fluentui/react-components";
-
-type FileCell = {
-  label: string;
-  icon: JSX.Element;
-};
-
-type LastUpdatedCell = {
-  label: string;
-  timestamp: number;
-};
-
-type LastUpdateCell = {
-  label: string;
-  icon: JSX.Element;
-};
-
-type AuthorCell = {
-  label: string;
-  status: PresenceBadgeStatus;
-};
-
-type Item = {
-  file: FileCell;
-  author: AuthorCell;
-  lastUpdated: LastUpdatedCell;
-  lastUpdate: LastUpdateCell;
-};
-
-const items: Item[] = [
-  {
-    file: { label: "Meeting notes", icon: <DocumentRegular /> },
-    author: { label: "Max Mustermann", status: "available" },
-    lastUpdated: { label: "7h ago", timestamp: 1 },
-    lastUpdate: {
-      label: "You edited this",
-      icon: <EditRegular />,
-    },
-  },
-  {
-    file: { label: "Thursday presentation", icon: <FolderRegular /> },
-    author: { label: "Erika Mustermann", status: "busy" },
-    lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
-    lastUpdate: {
-      label: "You recently opened this",
-      icon: <OpenRegular />,
-    },
-  },
-  {
-    file: { label: "Training recording", icon: <VideoRegular /> },
-    author: { label: "John Doe", status: "away" },
-    lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
-    lastUpdate: {
-      label: "You recently opened this",
-      icon: <OpenRegular />,
-    },
-  },
-  {
-    file: { label: "Purchase order", icon: <DocumentPdfRegular /> },
-    author: { label: "Jane Doe", status: "offline" },
-    lastUpdated: { label: "Tue at 9:30 AM", timestamp: 3 },
-    lastUpdate: {
-      label: "You shared this in a Teams chat",
-      icon: <PeopleRegular />,
-    },
-  },
-];
-
-const columns: TableColumnDefinition<Item>[] = [
-  createTableColumn<Item>({
-    columnId: "file",
-    compare: (a, b) => {
-      return a.file.label.localeCompare(b.file.label);
-    },
-    renderHeaderCell: () => {
-      return "File";
-    },
-    renderCell: (item) => {
-      return (
-        <TableCellLayout media={item.file.icon}>
-          {item.file.label}
-        </TableCellLayout>
-      );
-    },
-  }),
-  createTableColumn<Item>({
-    columnId: "author",
-    compare: (a, b) => {
-      return a.author.label.localeCompare(b.author.label);
-    },
-    renderHeaderCell: () => {
-      return "Author";
-    },
-    renderCell: (item) => {
-      return (
-        <TableCellLayout
-          media={
-            <Avatar
-              aria-label={item.author.label}
-              name={item.author.label}
-              badge={{ status: item.author.status }}
-            />
-          }
-        >
-          {item.author.label}
-        </TableCellLayout>
-      );
-    },
-  }),
-  createTableColumn<Item>({
-    columnId: "lastUpdated",
-    compare: (a, b) => {
-      return a.lastUpdated.timestamp - b.lastUpdated.timestamp;
-    },
-    renderHeaderCell: () => {
-      return "Last updated";
-    },
-
-    renderCell: (item) => {
-      return item.lastUpdated.label;
-    },
-  }),
-  createTableColumn<Item>({
-    columnId: "lastUpdate",
-    compare: (a, b) => {
-      return a.lastUpdate.label.localeCompare(b.lastUpdate.label);
-    },
-    renderHeaderCell: () => {
-      return "Last update";
-    },
-    renderCell: (item) => {
-      return (
-        <TableCellLayout media={item.lastUpdate.icon}>
-          {item.lastUpdate.label}
-        </TableCellLayout>
-      );
-    },
-  }),
-];
+import DataSetCard from "../components/DataSetCard";
+ 
 const useStyles = makeStyles({
-  card: {
-    margin: "auto",
-    padding: "20px",
-    width: "80%",
+  cardContainer: {
+    padding: "16px",
+    flexDirection: "row",
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "16px",   
+    alignItems: "flex-start",  
+    alignContent: "flex-start",
   },
 });
 export const DataSetPage = () => {
   const styles = useStyles();
-  
-  const listName = "数据集";
+
   return (
-    <Card className={styles.card}>
-      <CardHeader
-        header={
-          <Body1>
-            <b>{listName}</b>
-          </Body1>
-        }
+    <div className={styles.cardContainer}>
+      <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={() => {
+          alert("测试跳转");
+        }}
+      />{" "}
+      <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={() => {
+          alert("测试跳转");
+        }}
       />
-      <DataGrid
-        items={items}
-        columns={columns}
-        sortable
-        subtleSelection
-        selectionMode="multiselect"
-        getRowId={(item) => item.file.label}
-        focusMode="composite"
-        style={{ minWidth: "550px" }}
-      >
-        <DataGridHeader>
-          <DataGridRow
-            selectionCell={{
-              checkboxIndicator: { "aria-label": "Select all rows" },
-            }}
-          >
-            {({ renderHeaderCell }) => (
-              <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
-            )}
-          </DataGridRow>
-        </DataGridHeader>
-        <DataGridBody<Item>>
-          {({ item, rowId }) => (
-            <DataGridRow<Item>
-              key={rowId}
-              selectionCell={{
-                checkboxIndicator: { "aria-label": "Select row" },
-              }}
-            >
-              {({ renderCell }) => (
-                <DataGridCell>{renderCell(item)}</DataGridCell>
-              )}
-            </DataGridRow>
-          )}
-        </DataGridBody>
-      </DataGrid>
-    </Card>
+      <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={() => {
+          alert("测试跳转");
+        }}
+      />
+      <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={() => {
+          alert("测试跳转");
+        }}
+      />
+      <DataSetCard
+        title="Project Test #1"
+        description="这是测试项目"
+        progress="45/50"
+        status="away"
+        completed={5}
+        failed={0}
+        predictions={0}
+        createdAt="2024-11-05 14:22:20"
+        editedAt="2024-11-05 16:22:20"
+        onClick={() => {
+          alert("测试跳转");
+        }}
+      />
+    </div>
   );
 };
 

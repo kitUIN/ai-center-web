@@ -1,6 +1,6 @@
 import Home from "../pages/Home";
 import About from "../pages/About";
-import DataSetPage from "../pages/Dataset";
+import DataSetPage from "../pages/DataSet";
 
 import {
   Board20Filled,
