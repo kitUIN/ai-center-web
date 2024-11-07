@@ -1,12 +1,12 @@
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
-function objectToQueryParams(data: Record<string, any>): string {
+function objectToQueryParams(data: Record<string, string>): string {
   return new URLSearchParams(data).toString();
 }
 
 async function fetchData<T>(
   method: HttpMethod,
   api: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): Promise<T> {
   const options: RequestInit = {
     method: method.toUpperCase(),
@@ -15,7 +15,7 @@ async function fetchData<T>(
     },
   };
   if (method === "GET" && data) {
-    const queryParams = objectToQueryParams(data);
+    const queryParams = objectToQueryParams(data as Record<string, string>);
     api = `${api}?${queryParams}`;
   } else if ((method === "POST" || method === "PUT") && data) {
     options.body = JSON.stringify(data); // 将数据转换为 JSON 格式
@@ -36,14 +36,14 @@ async function fetchData<T>(
 }
 export async function fetchGet<T>(
   api: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): Promise<T> {
   return await fetchData("GET", api, data);
 }
 
 export async function fetchPost<T>(
   api: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): Promise<T> {
   return await fetchData("POST", api, data);
 }
@@ -82,17 +82,15 @@ export interface DetailResponse<T> extends BaseResponse {
   data?: T;
 }
 
-const baseUrl = import.meta.env.VITE_BASE_API;
-
 export async function fetchGetList<T>(
   api: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): Promise<ListResponse<T>> {
-  return await fetchGet(baseUrl + api, data);
+  return await fetchGet("/api" + api, data);
 }
 export async function fetchGetDetail<T>(
   api: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ): Promise<DetailResponse<T>> {
-  return await fetchGet(baseUrl + api, data);
+  return await fetchGet("/api" + api, data);
 }

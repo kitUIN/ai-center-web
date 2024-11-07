@@ -33,7 +33,7 @@ interface ProjectCardProps {
   title: string;
   description: string;
   progress: string;
-  status: "available" | "away" | "busy" | "offline"; // 根据 PresenceBadge 状态选择合适的类型
+  status: boolean;
   completed: number;
   failed: number;
   predictions: number;
@@ -120,8 +120,8 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
         }
         action={
           <div className={styles.flex}>
-            <Tooltip content={status} relationship="label">
-              <PresenceBadge status={status} />
+            <Tooltip content={status? "标注完成" : "进行中"} relationship="label">
+              <PresenceBadge status={status? "available" : "away"} />
             </Tooltip>
             <Body1>{progress}</Body1>
             <Menu>

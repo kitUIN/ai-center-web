@@ -14,6 +14,7 @@ import { Tooltip, makeStyles, tokens } from "@fluentui/react-components";
 import { useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { useEffect } from "react";
 import { NavRouterItem, navItems } from "./utils/NavItems";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const useStyles = makeStyles({
   root: {
     overflow: "hidden",
@@ -44,6 +45,7 @@ function CheckHeader(item: NavRouterItem) {
   }
   return <></>;
 }
+const queryClient = new QueryClient();
 export const App = (props: Partial<NavDrawerProps>) => {
   const styles = useStyles();
   const location = useLocation();
@@ -113,7 +115,9 @@ export const App = (props: Partial<NavDrawerProps>) => {
           ))}
         </NavDrawerBody>
       </NavDrawer>
-      <MyRoutes />
+      <QueryClientProvider client={queryClient}>
+        <MyRoutes />
+      </QueryClientProvider>
     </div>
   );
 };

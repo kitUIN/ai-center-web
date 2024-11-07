@@ -22,7 +22,10 @@ export async function datasetDetail(id: ModelId) {
  * @param id id
  */
 export async function datasetUpdate(id: ModelId, data: DataSet) {
-  return fetchPost<DataSet>(`${baseApi}${id}/update/`, data);
+  return fetchPost<DataSet>(
+    `${baseApi}${id}/update/`,
+    data as Record<string, unknown>
+  );
 }
 
 /**

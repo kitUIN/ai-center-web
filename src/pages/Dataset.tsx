@@ -2,6 +2,8 @@ import {
   makeStyles,
 } from "@fluentui/react-components";
 import DataSetCard from "../components/DataSetCard";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { datasetList } from "../utils/api/DataSet";
  
 const useStyles = makeStyles({
   cardContainer: {
@@ -16,79 +18,26 @@ const useStyles = makeStyles({
 });
 export const DataSetPage = () => {
   const styles = useStyles();
-
+  const queryClient = useQueryClient();
+  const datasetQuery = useQuery({ queryKey: ['datasets'], queryFn: datasetList });
   return (
     <div className={styles.cardContainer}>
-      <DataSetCard
-        title="Project Test #1"
-        description="这是测试项目"
-        progress="45/50"
-        status="away"
-        completed={5}
-        failed={0}
-        predictions={0}
-        createdAt="2024-11-05 14:22:20"
-        editedAt="2024-11-05 16:22:20"
-        onClick={() => {
-          alert("测试跳转");
-        }}
-      />{" "}
-      <DataSetCard
-        title="Project Test #1"
-        description="这是测试项目"
-        progress="45/50"
-        status="away"
-        completed={5}
-        failed={0}
-        predictions={0}
-        createdAt="2024-11-05 14:22:20"
-        editedAt="2024-11-05 16:22:20"
-        onClick={() => {
-          alert("测试跳转");
-        }}
-      />
-      <DataSetCard
-        title="Project Test #1"
-        description="这是测试项目"
-        progress="45/50"
-        status="away"
-        completed={5}
-        failed={0}
-        predictions={0}
-        createdAt="2024-11-05 14:22:20"
-        editedAt="2024-11-05 16:22:20"
-        onClick={() => {
-          alert("测试跳转");
-        }}
-      />
-      <DataSetCard
-        title="Project Test #1"
-        description="这是测试项目"
-        progress="45/50"
-        status="away"
-        completed={5}
-        failed={0}
-        predictions={0}
-        createdAt="2024-11-05 14:22:20"
-        editedAt="2024-11-05 16:22:20"
-        onClick={() => {
-          alert("测试跳转");
-        }}
-      />
-      <DataSetCard
-        title="Project Test #1"
-        description="这是测试项目"
-        progress="45/50"
-        status="away"
-        completed={5}
-        failed={0}
-        predictions={0}
-        createdAt="2024-11-05 14:22:20"
-        editedAt="2024-11-05 16:22:20"
-        onClick={() => {
-          alert("测试跳转");
-        }}
-      />
+      {datasetQuery.data?.data?.data?.map((dataset) => (
+          <DataSetCard
+          title={dataset.name}
+          description={dataset.description}
+          progress={`${dataset.finished_task_number}/${dataset.task_number}`}
+          status={dataset.status}
+          completed={dataset.total_annotations_number}
+          failed={dataset.skipped_annotations_number}
+          predictions={dataset.total_predictions_number}
+          createdAt={dataset.create_datetime}
+          editedAt={dataset.update_datetime}
+          onClick={() => {
+            alert("测试跳转");
+          }}
+        />
+        ))}
     </div>
   );
 };

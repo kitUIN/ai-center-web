@@ -18,4 +18,5 @@ export interface BaseModel {
    * 格式为: 2024-11-05 05:00:00
    */
   update_datetime: string;
+  [key: string]: unknown;
 }
