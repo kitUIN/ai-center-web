@@ -23,6 +23,7 @@ export const DataSetPage = () => {
   const datasetQuery = useQuery({
     queryKey: ["datasets"],
     queryFn: datasetList,
+    staleTime:0
   });
   return (
     <div className={styles.toolBar}>

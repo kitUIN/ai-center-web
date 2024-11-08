@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogBody,
   DialogActions,
-  Button, 
+  Button,
   makeStyles,
   Label,
   Input,
@@ -32,33 +32,45 @@ const useStyles = makeStyles({
 
 export const DataSetAdd = () => {
   const styles = useStyles();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const [formData, setFormData] = React.useState(defaultDataSet);
   const handleSubmit = (ev: React.FormEvent) => {
+    datasetCreate(formData).then((resp) => {
+      if (resp.code === 200) {
+        alert("添加成功");
+        setDialogOpen(false);
+        setFormData({
+          ...formData,
+          ["name"]: "",
+          ["description"]: "",
+        });
+      } else {
+        alert(resp.msg);
+      }
+    });
     ev.preventDefault();
-    datasetCreate(formData).then(
-        (resp)=>{
-            if(resp.code === 200){
-                alert("添加成功")
-            }else{
-                alert(resp.msg)
-            }
-        }
-    )
   };
-  const handleChange = (ev: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
-     
+  const handleChange = (
+    ev: ChangeEvent<HTMLInputElement>,
+    data: InputOnChangeData
+  ) => {
     const { name } = ev.target;
     setFormData({
       ...formData,
-      [name]: data.value || ''
+      [name]: data.value || "",
     });
   };
 
-
   return (
-    <Dialog modalType="modal">
+    <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
-        <Button icon={<AddButtonIcon />} style={{ width: "100px" }}>
+        <Button
+          onClick={() => {
+            setDialogOpen(true);
+          }}
+          icon={<AddButtonIcon />}
+          style={{ width: "100px" }}
+        >
           新建
         </Button>
       </DialogTrigger>
@@ -71,7 +83,8 @@ export const DataSetAdd = () => {
                 数据集名称
               </Label>
               <Input
-                required name="name"
+                required
+                name="name"
                 value={formData.name}
                 onChange={handleChange}
                 id={"name"}
@@ -79,7 +92,8 @@ export const DataSetAdd = () => {
               <Label required htmlFor={"description"}>
                 数据集描述
               </Label>
-              <Input name="description"
+              <Input
+                name="description"
                 value={formData.description}
                 onChange={handleChange}
                 id={"description"}
@@ -87,7 +101,14 @@ export const DataSetAdd = () => {
             </DialogContent>
             <DialogActions>
               <DialogTrigger disableButtonEnhancement>
-                <Button appearance="secondary">关闭</Button>
+                <Button
+                  appearance="secondary"
+                  onClick={() => {
+                    setDialogOpen(false);
+                  }}
+                >
+                  取消
+                </Button>
               </DialogTrigger>
               <Button type="submit" appearance="primary">
                 提交
