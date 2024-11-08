@@ -81,7 +81,7 @@ export const App = (props: Partial<NavDrawerProps>) => {
   return (
     <div className={styles.root}>
       <NavDrawer
-        style={{ width: "400px" }}
+        style={{ minWidth: "160px",width: "160px" }}
         // This a controlled example,
         // so don't use these props
         // defaultSelectedValue="1"
