@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { NavRouterItem } from "./utils/NavItems";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { navItems } from "./components/NavItems";
+import { NotificationProvider } from "./utils/notification/NotificationContext";
 const useStyles = makeStyles({
   root: {
     overflow: "hidden",
@@ -73,7 +74,7 @@ export const App = () => {
       }
     });
   }, [location.pathname]);
-  return (
+  return (<NotificationProvider>
     <div className={styles.root}>
       <NavDrawer
         style={{ minWidth: "160px",width: "160px" }}
@@ -115,5 +116,6 @@ export const App = () => {
         <MyRoutes />
       </QueryClientProvider>
     </div>
+    </NotificationProvider>
   );
 };

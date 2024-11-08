@@ -21,6 +21,7 @@ import {
 import { ChangeEvent } from "react";
 import { defaultDataSet } from "../utils/api/models/DataSet";
 import { datasetCreate } from "../utils/api/DataSet";
+import { useNotification } from "../utils/notification/Notification";
 const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 const useStyles = makeStyles({
   content: {
@@ -32,12 +33,14 @@ const useStyles = makeStyles({
 
 export const DataSetAdd = () => {
   const styles = useStyles();
+  const { showNotification } = useNotification();
+
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [formData, setFormData] = React.useState(defaultDataSet);
   const handleSubmit = (ev: React.FormEvent) => {
     datasetCreate(formData).then((resp) => {
       if (resp.code === 200) {
-        alert("添加成功");
+        showNotification(resp.msg, 'success');
         setDialogOpen(false);
         setFormData({
           ...formData,
@@ -45,7 +48,7 @@ export const DataSetAdd = () => {
           ["description"]: "",
         });
       } else {
-        alert(resp.msg);
+        showNotification(resp.msg, 'error');
       }
     });
     ev.preventDefault();

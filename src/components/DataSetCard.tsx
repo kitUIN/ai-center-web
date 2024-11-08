@@ -35,6 +35,7 @@ import {
 } from "@fluentui/react-icons";
 import { datasetDelete } from "../utils/api/DataSet";
 import { ModelId } from "../utils/api/models/Base";
+import { useNotification } from "../utils/notification/Notification";
 
 // 定义组件属性类型
 interface ProjectCardProps {
@@ -108,13 +109,14 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
 }) => {
   const styles = useStyles();
 
+  const { showNotification } = useNotification();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleMenuItemClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     setIsDialogOpen(true);
   };
- 
+
   const handleMenuItemDeleteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     setIsDialogOpen(true);
@@ -128,12 +130,14 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
     datasetDelete(id).then((resp) => {
       if (resp.code === 200) {
         setIsDialogOpen(false);
+
+        showNotification(resp.msg, "success");
       } else {
-        alert(resp.msg);
+        showNotification(resp.msg, "error");
       }
     });
   };
- 
+
   return (
     <>
       <Card className={styles.card} onClick={onClick}>
@@ -232,7 +236,7 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
       </Card>
       {isDialogOpen && (
         <Dialog modalType="alert" open={isDialogOpen}>
-          <DialogSurface >
+          <DialogSurface>
             <DialogBody>
               <DialogTitle>删除确认</DialogTitle>
               <DialogContent>确认要删除吗? 删除后无法恢复</DialogContent>

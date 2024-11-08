@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   FolderRegular,
   EditRegular,
@@ -24,7 +23,6 @@ import {
   Card,
   CardHeader,
   Body1,
-  Caption1,
 } from "@fluentui/react-components";
 
 type FileCell = {
