@@ -4,17 +4,16 @@ import {
   NavDrawer,
   NavDrawerBody,
   NavDrawerHeader,
-  NavDrawerProps,
   NavItem,
-  NavItemValue,
   NavSectionHeader,
   OnNavItemSelectData,
 } from "@fluentui/react-nav-preview";
 import { Tooltip, makeStyles, tokens } from "@fluentui/react-components";
 import { useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { useEffect } from "react";
-import { NavRouterItem, navItems } from "./utils/NavItems";
+import { NavRouterItem } from "./utils/NavItems";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { navItems } from "./components/NavItems";
 const useStyles = makeStyles({
   root: {
     overflow: "hidden",
@@ -46,15 +45,11 @@ function CheckHeader(item: NavRouterItem) {
   return <></>;
 }
 const queryClient = new QueryClient();
-export const App = (props: Partial<NavDrawerProps>) => {
+export const App = () => {
   const styles = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [openCategories, setOpenCategories] = React.useState<NavItemValue[]>([
-    "6",
-    "11",
-  ]);
   const [selectedCategoryValue, setSelectedCategoryValue] = React.useState<
     string | undefined
   >("home");
@@ -90,7 +85,7 @@ export const App = (props: Partial<NavDrawerProps>) => {
         // multiple={isMultiple}
         // onNavCategoryItemToggle={handleCategoryToggle}
         onNavItemSelect={handleItemSelect}
-        openCategories={openCategories}
+        // openCategories={openCategories}
         selectedValue={selectedValue}
         selectedCategoryValue={selectedCategoryValue}
         type={"inline"}

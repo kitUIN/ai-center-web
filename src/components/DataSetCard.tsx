@@ -238,7 +238,7 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
               <DialogContent>确认要删除吗? 删除后无法恢复</DialogContent>
               <DialogActions>
                 <Button appearance="secondary" onClick={closeDialog}>
-                  关闭
+                  取消
                 </Button>
                 <Button
                   appearance="primary"
