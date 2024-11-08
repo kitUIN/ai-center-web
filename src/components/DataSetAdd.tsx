@@ -56,7 +56,7 @@ export const DataSetAdd = () => {
 
 
   return (
-    <Dialog modalType="non-modal">
+    <Dialog modalType="modal">
       <DialogTrigger disableButtonEnhancement>
         <Button icon={<AddButtonIcon />} style={{ width: "100px" }}>
           新建
