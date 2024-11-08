@@ -1,3 +1,5 @@
+import { ModelId } from "./models/Base";
+
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 function objectToQueryParams(data: Record<string, string>): string {
   return new URLSearchParams(data).toString();
@@ -84,13 +86,39 @@ export interface DetailResponse<T> extends BaseResponse {
 
 export async function fetchGetList<T>(
   api: string,
-  data?: Record<string, unknown>
+  data?: T | null
 ): Promise<ListResponse<T>> {
-  return await fetchGet("/api" + api, data);
+  return await fetchGet("/api" + api, data as Record<string, unknown>);
 }
 export async function fetchGetDetail<T>(
-  api: string,
-  data?: Record<string, unknown>
+  baseApi: string,
+  id: ModelId
 ): Promise<DetailResponse<T>> {
-  return await fetchGet("/api" + api, data);
+  return await fetchGet(`/api${baseApi}${id}/`);
+}
+
+export async function fetchPostCreate<T>(
+  api: string,
+  data?: T
+): Promise<DetailResponse<T>> {
+  return await fetchPost("/api" + api, data as Record<string, unknown>);
+}
+/**
+ * 更新单个
+ * @param id id
+ */
+export async function fetchPostUpdate<T>(
+  baseApi: string,
+  id: ModelId,
+  data: T
+) {
+  return fetchPost(`${baseApi}${id}/update/`, data as Record<string, unknown>);
+}
+
+/**
+ * 删除单个
+ * @param id id
+ */
+export async function fetchPostDelete<T>(baseApi: string, id: ModelId) {
+  return fetchPost<DetailResponse<T>>(`${baseApi}${id}/delete/`);
 }

@@ -1,4 +1,10 @@
-import { fetchGetDetail, fetchGetList, fetchPost } from "./BaseFetch";
+import {
+  fetchGetDetail,
+  fetchGetList,
+  fetchPostCreate,
+  fetchPostDelete,
+  fetchPostUpdate,
+} from "./BaseFetch";
 import { ModelId } from "./models/Base";
 import { DataSet } from "./models/DataSet";
 
@@ -10,11 +16,17 @@ export async function datasetList() {
   return fetchGetList<DataSet>(baseApi);
 }
 /**
+ * 创建
+ */
+export async function datasetCreate(data: DataSet) {
+  return fetchPostCreate(baseApi, data);
+}
+/**
  * 查询单个详情
  * @param id id
  */
 export async function datasetDetail(id: ModelId) {
-  return fetchGetDetail<DataSet>(`${baseApi}${id}/`);
+  return fetchGetDetail<DataSet>(baseApi, id);
 }
 
 /**
@@ -22,10 +34,7 @@ export async function datasetDetail(id: ModelId) {
  * @param id id
  */
 export async function datasetUpdate(id: ModelId, data: DataSet) {
-  return fetchPost<DataSet>(
-    `${baseApi}${id}/update/`,
-    data as Record<string, unknown>
-  );
+  return fetchPostUpdate(baseApi, id, data);
 }
 
 /**
@@ -33,5 +42,5 @@ export async function datasetUpdate(id: ModelId, data: DataSet) {
  * @param id id
  */
 export async function datasetDelete(id: ModelId) {
-  return fetchPost<DataSet>(`${baseApi}${id}/delete/`);
+  return fetchPostDelete<DataSet>(baseApi, id);
 }

@@ -37,3 +37,16 @@ export interface DataSet extends BaseModel {
    */
   skipped_annotations_number: number;
 }
+export const defaultDataSet: DataSet = {
+  name: "",
+  description: "",
+  create_datetime: null,
+  update_datetime: null,
+  id: null,
+  total_annotations_number: 0,
+  total_predictions_number: 0,
+  task_number: 0,
+  finished_task_number: 0,
+  status: false,
+  skipped_annotations_number: 0,
+};
