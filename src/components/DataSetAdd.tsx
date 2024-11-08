@@ -89,7 +89,7 @@ export const DataSetAdd = () => {
                 onChange={handleChange}
                 id={"name"}
               />
-              <Label required htmlFor={"description"}>
+              <Label htmlFor={"description"}>
                 数据集描述
               </Label>
               <Input
