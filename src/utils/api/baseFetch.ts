@@ -112,7 +112,7 @@ export async function fetchPostUpdate<T>(
   id: ModelId,
   data: T
 ) {
-  return fetchPost(`${baseApi}${id}/update/`, data as Record<string, unknown>);
+  return fetchPost(`/api${baseApi}${id}/update/`, data as Record<string, unknown>);
 }
 
 /**
@@ -120,5 +120,5 @@ export async function fetchPostUpdate<T>(
  * @param id id
  */
 export async function fetchPostDelete<T>(baseApi: string, id: ModelId) {
-  return fetchPost<DetailResponse<T>>(`${baseApi}${id}/delete/`);
+  return fetchPost<DetailResponse<T>>(`/api${baseApi}${id}/delete/`);
 }
