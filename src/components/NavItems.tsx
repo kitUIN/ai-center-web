@@ -3,11 +3,11 @@ import About from "../pages/About";
 import DataSetPage from "../pages/DataSet";
 import {
   Dashboard,
-  Announcements,
   NavRouterItem,
-  Interviews,
+  Bot,
   EmployeeSpotlight,
-  TrainingPrograms,
+  DataBase,
+  BotSparkle,
 } from "../utils/NavItems";
 export const navItems: NavRouterItem[] = [
   {
@@ -23,7 +23,7 @@ export const navItems: NavRouterItem[] = [
     name: "数据集",
     header: null,
     path: "/dataset",
-    icon: <Announcements />,
+    icon: <DataBase />,
     element: <DataSetPage />,
   },
   {
@@ -39,7 +39,7 @@ export const navItems: NavRouterItem[] = [
     name: "模型配置",
     header: "模型",
     path: "/model/config",
-    icon: <Interviews />,
+    icon: <Bot />,
     element: <About />,
   },
   {
@@ -47,7 +47,7 @@ export const navItems: NavRouterItem[] = [
     name: "模型能力",
     header: null,
     path: "/model/power",
-    icon: <TrainingPrograms />,
+    icon: <BotSparkle />,
     element: <About />,
   },
 ];

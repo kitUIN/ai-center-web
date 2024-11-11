@@ -1,6 +1,31 @@
-import React, {  useState } from "react";
-import { MessageBar, MessageBarGroup } from "@fluentui/react-components";
+import React, { useState } from "react";
+import {
+  makeStyles,
+  MessageBar,
+  MessageBarGroup,
+  tokens,
+} from "@fluentui/react-components";
 import { MessageType, NotificationContext } from "./NotificationInstance";
+
+const useStyles = makeStyles({
+  messageBarGroup: {
+    padding: tokens.spacingHorizontalMNudge,
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    overflow: "auto",
+  },
+  messageDiv: {
+    position: "fixed",
+    top: "10px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 1000,
+    display: "flex",
+    justifyContent: "center",
+    width: "auto",
+  },
+});
 
 export const NotificationProvider: React.FC<
   React.PropsWithChildren<object>
@@ -8,6 +33,7 @@ export const NotificationProvider: React.FC<
   const [messages, setMessages] = useState<
     { message: string; type: MessageType }[]
   >([]);
+  const styles = useStyles();
 
   const showNotification = (message: string, type: MessageType) => {
     setMessages((prevMessages) => [...prevMessages, { message, type }]);
@@ -21,21 +47,14 @@ export const NotificationProvider: React.FC<
     <NotificationContext.Provider value={{ showNotification }}>
       {children}
       {messages.length > 0 && (
-        <div
-          style={{
-            position: "fixed",
-            top: 20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1000,
-            display: "flex",
-            justifyContent: "center",
-            width: "auto",
-          }}
-        >
-          <MessageBarGroup>
+        <div className={styles.messageDiv}>
+          <MessageBarGroup animate="both" className={styles.messageBarGroup}>
             {messages.map((msg, index) => (
-              <MessageBar style={{paddingRight: "14px"}} key={index} intent={msg.type}>
+              <MessageBar
+                style={{ paddingRight: "14px" }}
+                key={index}
+                intent={msg.type}
+              >
                 {msg.message}
               </MessageBar>
             ))}
@@ -45,4 +64,3 @@ export const NotificationProvider: React.FC<
     </NotificationContext.Provider>
   );
 };
-

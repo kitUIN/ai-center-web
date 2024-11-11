@@ -1,11 +1,18 @@
-import { Card, makeStyles } from "@fluentui/react-components";
+import { Button, Card, makeStyles } from "@fluentui/react-components";
 import DataSetCard from "../components/DataSetCard";
 import { useQuery } from "@tanstack/react-query";
 import { datasetList } from "../utils/api/DataSet";
 import { DataSetAdd } from "../components/DataSetAdd";
+import { ArrowClockwiseRegular } from "@fluentui/react-icons";
 const useStyles = makeStyles({
   toolBar: {
     width: "100%",
+  },
+  toolCardBar: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    gap: "16px",
   },
   cardContainer: {
     padding: "16px",
@@ -23,12 +30,13 @@ export const DataSetPage = () => {
   const datasetQuery = useQuery({
     queryKey: ["datasets"],
     queryFn: datasetList,
-    staleTime:0
+    staleTime: 0,
   });
   return (
     <div className={styles.toolBar}>
-      <Card className={styles.toolBar}>
+      <Card className={styles.toolCardBar}>
         <DataSetAdd />
+        <Button icon={<ArrowClockwiseRegular />}>刷新</Button>
       </Card>
       <div className={styles.cardContainer}>
         {datasetQuery.data?.data?.data?.map((dataset) => (

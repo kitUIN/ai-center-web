@@ -36,6 +36,7 @@ import {
 import { datasetDelete } from "../utils/api/DataSet";
 import { ModelId } from "../utils/api/models/Base";
 import { useNotification } from "../utils/notification/Notification";
+import { useQueryClient } from "@tanstack/react-query";
 
 // 定义组件属性类型
 interface ProjectCardProps {
@@ -108,7 +109,7 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
   onClick,
 }) => {
   const styles = useStyles();
-
+  const queryClient = useQueryClient();
   const { showNotification } = useNotification();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -130,8 +131,8 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
     datasetDelete(id).then((resp) => {
       if (resp.code === 200) {
         setIsDialogOpen(false);
-
         showNotification(resp.msg, "success");
+        queryClient.refetchQueries({ queryKey: ["datasets"], exact: true })
       } else {
         showNotification(resp.msg, "error");
       }

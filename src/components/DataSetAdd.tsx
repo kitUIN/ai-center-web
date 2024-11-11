@@ -22,6 +22,7 @@ import { ChangeEvent } from "react";
 import { defaultDataSet } from "../utils/api/models/DataSet";
 import { datasetCreate } from "../utils/api/DataSet";
 import { useNotification } from "../utils/notification/Notification";
+import { useQueryClient } from "@tanstack/react-query";
 const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 const useStyles = makeStyles({
   content: {
@@ -35,6 +36,7 @@ export const DataSetAdd = () => {
   const styles = useStyles();
   const { showNotification } = useNotification();
 
+  const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [formData, setFormData] = React.useState(defaultDataSet);
   const handleSubmit = (ev: React.FormEvent) => {
@@ -47,6 +49,7 @@ export const DataSetAdd = () => {
           ["name"]: "",
           ["description"]: "",
         });
+        queryClient.refetchQueries({ queryKey: ["datasets"], exact: true })
       } else {
         showNotification(resp.msg, 'error');
       }

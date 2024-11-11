@@ -168,10 +168,11 @@ export const About = () => {
 
       <section className={styles.section}>
         <DataSetCard
+        id="222"
         title="Project Test #1"
         description="这是测试项目"
         progress="45/50"
-        status="away"
+        status={true}
         completed={5}
         failed={0}
         predictions={0}

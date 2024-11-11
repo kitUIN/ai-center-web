@@ -2,6 +2,10 @@
 import {
   Board20Filled,
   Board20Regular,
+  Bot20Filled,
+  Bot20Regular,
+  BotSparkle20Filled,
+  BotSparkle20Regular,
   BoxMultiple20Filled,
   BoxMultiple20Regular,
   MegaphoneLoud20Filled,
@@ -20,8 +24,11 @@ export const EmployeeSpotlight = bundleIcon(
   PersonLightbulb20Regular
 );
 export const Interviews = bundleIcon(People20Filled, People20Regular);
-export const TrainingPrograms = bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular);
+export const BotSparkle = bundleIcon(BotSparkle20Filled, BotSparkle20Regular);
+export const Bot = bundleIcon(Bot20Filled, Bot20Regular);
+export const DataBase = bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular);
 
+ 
 export type NavRouterItem = {
   key: string;
   path: string;
