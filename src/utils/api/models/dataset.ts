@@ -40,6 +40,10 @@ export interface DataSet extends BaseModel {
    * 跳转链接
    */
   middle_url?: string;
+  /**
+   * 设置链接
+   */
+  settings_url?: string;
 }
 export const defaultDataSet: DataSet = {
   name: "",

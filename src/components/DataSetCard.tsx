@@ -93,7 +93,7 @@ const DataSetCard: React.FC<ProjectCardProps> = ({ dataset }) => {
 
   const handleMenuItemClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setIsDialogOpen(true);
+    window.open(dataset.settings_url, "_blank", "noopener,noreferrer");
   };
   const openInNewTab = () => {
     window.open(dataset.middle_url, "_blank", "noopener,noreferrer");
