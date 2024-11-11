@@ -36,6 +36,10 @@ export interface DataSet extends BaseModel {
    * 跳过数量
    */
   skipped_annotations_number: number;
+  /**
+   * 跳转链接
+   */
+  middle_url?: string;
 }
 export const defaultDataSet: DataSet = {
   name: "",

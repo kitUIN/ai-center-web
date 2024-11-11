@@ -1,6 +1,6 @@
 import { Button, Card, makeStyles } from "@fluentui/react-components";
 import DataSetCard from "../components/DataSetCard";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { datasetList } from "../utils/api/DataSet";
 import { DataSetAdd } from "../components/DataSetAdd";
 import { ArrowClockwiseRegular } from "@fluentui/react-icons";
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 });
 export const DataSetPage = () => {
   const styles = useStyles();
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const datasetQuery = useQuery({
     queryKey: ["datasets"],
     queryFn: datasetList,
@@ -36,26 +36,18 @@ export const DataSetPage = () => {
     <div className={styles.toolBar}>
       <Card className={styles.toolCardBar}>
         <DataSetAdd />
-        <Button icon={<ArrowClockwiseRegular />}>刷新</Button>
+        <Button
+          icon={<ArrowClockwiseRegular />}
+          onClick={() =>
+            queryClient.refetchQueries({ queryKey: ["datasets"], exact: true })
+          }
+        >
+          刷新
+        </Button>
       </Card>
       <div className={styles.cardContainer}>
         {datasetQuery.data?.data?.data?.map((dataset) => (
-          <DataSetCard
-            id={dataset.id}
-            key={dataset.id}
-            title={dataset.name}
-            description={dataset.description}
-            progress={`${dataset.finished_task_number}/${dataset.task_number}`}
-            status={dataset.status}
-            completed={dataset.total_annotations_number}
-            failed={dataset.skipped_annotations_number}
-            predictions={dataset.total_predictions_number}
-            createdAt={dataset.create_datetime || ""}
-            editedAt={dataset.update_datetime || ""}
-            onClick={() => {
-              alert("测试跳转1");
-            }}
-          />
+          <DataSetCard dataset={dataset} />
         ))}
       </div>
     </div>

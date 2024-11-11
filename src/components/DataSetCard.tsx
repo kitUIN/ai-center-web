@@ -34,23 +34,13 @@ import {
   MoreHorizontalFilled,
 } from "@fluentui/react-icons";
 import { datasetDelete } from "../utils/api/DataSet";
-import { ModelId } from "../utils/api/models/Base";
 import { useNotification } from "../utils/notification/Notification";
 import { useQueryClient } from "@tanstack/react-query";
+import { DataSet } from "../utils/api/models/DataSet";
 
 // 定义组件属性类型
 interface ProjectCardProps {
-  id: ModelId;
-  title: string;
-  description: string;
-  progress: string;
-  status: boolean;
-  completed: number;
-  failed: number;
-  predictions: number;
-  createdAt: string;
-  editedAt: string;
-  onClick: () => void;
+  dataset: DataSet;
 }
 const useStyles = makeStyles({
   card: {
@@ -95,19 +85,7 @@ const useStyles = makeStyles({
 const handleMenuClick = (event: React.MouseEvent) => {
   event.stopPropagation();
 };
-const DataSetCard: React.FC<ProjectCardProps> = ({
-  id,
-  title,
-  description,
-  progress,
-  status,
-  completed,
-  failed,
-  predictions,
-  createdAt,
-  editedAt,
-  onClick,
-}) => {
+const DataSetCard: React.FC<ProjectCardProps> = ({ dataset }) => {
   const styles = useStyles();
   const queryClient = useQueryClient();
   const { showNotification } = useNotification();
@@ -117,7 +95,9 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
     event.stopPropagation();
     setIsDialogOpen(true);
   };
-
+  const openInNewTab = () => {
+    window.open(dataset.middle_url, "_blank", "noopener,noreferrer");
+  };
   const handleMenuItemDeleteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     setIsDialogOpen(true);
@@ -128,11 +108,11 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
   };
   const deteleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    datasetDelete(id).then((resp) => {
+    datasetDelete(dataset.id).then((resp) => {
       if (resp.code === 200) {
         setIsDialogOpen(false);
         showNotification(resp.msg, "success");
-        queryClient.refetchQueries({ queryKey: ["datasets"], exact: true })
+        queryClient.refetchQueries({ queryKey: ["datasets"], exact: true });
       } else {
         showNotification(resp.msg, "error");
       }
@@ -141,24 +121,24 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
 
   return (
     <>
-      <Card className={styles.card} onClick={onClick}>
+      <Card className={styles.card} onClick={openInNewTab}>
         <CardHeader
           header={
-            <Tooltip content={title} relationship="label">
+            <Tooltip content={dataset.name} relationship="label">
               <div style={{ width: "200px" }}>
                 <Text weight="semibold" className={styles.ellipsisText}>
-                  {title}
+                  {dataset.name}
                 </Text>
               </div>
             </Tooltip>
           }
           description={
-            <Tooltip content={description} relationship="label">
+            <Tooltip content={dataset.description} relationship="label">
               <div style={{ width: "230px" }}>
                 <Caption1
                   className={mergeClasses(styles.caption, styles.ellipsisText)}
                 >
-                  {description}
+                  {dataset.description}
                 </Caption1>
               </div>
             </Tooltip>
@@ -166,12 +146,12 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
           action={
             <div className={styles.flex}>
               <Tooltip
-                content={status ? "标注完成" : "进行中"}
+                content={dataset.status ? "标注完成" : "进行中"}
                 relationship="label"
               >
-                <PresenceBadge status={status ? "available" : "away"} />
+                <PresenceBadge status={dataset.status ? "available" : "away"} />
               </Tooltip>
-              <Body1>{progress}</Body1>
+              <Body1>{`${dataset.finished_task_number}/${dataset.task_number}`}</Body1>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
                   <Tooltip content="更多操作" relationship="label">
@@ -209,27 +189,27 @@ const DataSetCard: React.FC<ProjectCardProps> = ({
         <footer className={mergeClasses(styles.flex, styles.footer)}>
           <div className={styles.flex}>
             <CheckmarkCircleFilled primaryFill="#13A10E" fontSize="20px" />
-            <Body1>{completed}</Body1>
+            <Body1>{dataset.total_annotations_number}</Body1>
           </div>
           <div className={styles.flex}>
             <ErrorCircleFilled primaryFill="#D13438" fontSize="20px" />
-            <Body1>{failed}</Body1>
+            <Body1>{dataset.skipped_annotations_number}</Body1>
           </div>
           <div className={styles.flex}>
             <LightbulbFilamentFilled primaryFill="#677ED4" fontSize="20px" />
-            <Body1>{predictions}</Body1>
+            <Body1>{dataset.total_predictions_number}</Body1>
           </div>
           <div>
             <Tooltip content="创建时间" relationship="label">
               <div className={styles.footerDateTime}>
                 <CalendarDateFilled primaryFill="#6B6860" fontSize={18} />
-                <Text>{createdAt}</Text>
+                <Text>{dataset.create_datetime}</Text>
               </div>
             </Tooltip>
             <Tooltip content="更新时间" relationship="label">
               <div className={styles.footerDateTime}>
                 <HistoryFilled primaryFill="#6B6860" fontSize={18} />
-                <Text>{editedAt}</Text>
+                <Text>{dataset.update_datetime}</Text>
               </div>
             </Tooltip>
           </div>
