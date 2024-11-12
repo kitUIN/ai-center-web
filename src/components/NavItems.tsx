@@ -9,6 +9,7 @@ import {
   DataBase,
   BotSparkle,
 } from "../utils/NavItems";
+import DataGridTest from "../pages/AIModel";
 export const navItems: NavRouterItem[] = [
   {
     key: "home",
@@ -35,12 +36,12 @@ export const navItems: NavRouterItem[] = [
     element: <About />,
   },
   {
-    key: "model_config",
-    name: "模型配置",
+    key: "model",
+    name: "模型列表",
     header: "模型",
-    path: "/model/config",
+    path: "/model/ai",
     icon: <Bot />,
-    element: <About />,
+    element: <DataGridTest />,
   },
   {
     key: "model_power",

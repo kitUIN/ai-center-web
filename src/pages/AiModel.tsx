@@ -23,7 +23,10 @@ import {
   Card,
   CardHeader,
   Body1,
+  DataGridProps,
 } from "@fluentui/react-components";
+import React from "react";
+import PageController from "../components/PageController";
 
 type FileCell = {
   label: string;
@@ -164,17 +167,30 @@ const columns: TableColumnDefinition<Item>[] = [
 ];
 const useStyles = makeStyles({
   card: {
+    display:"flex",
+    justifyContent:"space-between",
     margin: "auto",
     padding: "20px",
-    width: "80%",
+    width:"80%", height:"80%"
   },
 });
 export const DataGridTest = () => {
   const styles = useStyles();
-  
-  const listName = "模型列表";
+  const [sortState, setSortState] = React.useState<
+    Parameters<NonNullable<DataGridProps["onSortChange"]>>[1]
+  >({
+    sortColumn: "file",
+    sortDirection: "ascending",
+  });
+  const [current, setCurrent] = React.useState(1);
+  const onSortChange: DataGridProps["onSortChange"] = (e, nextSortState) => {
+    setSortState(nextSortState);
+  };
+
+  const listName = "数据集";
   return (
     <Card className={styles.card}>
+      <div>
       <CardHeader
         header={
           <Body1>
@@ -186,18 +202,12 @@ export const DataGridTest = () => {
         items={items}
         columns={columns}
         sortable
-        subtleSelection
-        selectionMode="multiselect"
-        getRowId={(item) => item.file.label}
-        focusMode="composite"
-        style={{ minWidth: "550px" }}
+        sortState={sortState}
+        onSortChange={onSortChange}
+        style={{ minWidth: "500px" }}
       >
         <DataGridHeader>
-          <DataGridRow
-            selectionCell={{
-              checkboxIndicator: { "aria-label": "Select all rows" },
-            }}
-          >
+          <DataGridRow>
             {({ renderHeaderCell }) => (
               <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
             )}
@@ -205,12 +215,7 @@ export const DataGridTest = () => {
         </DataGridHeader>
         <DataGridBody<Item>>
           {({ item, rowId }) => (
-            <DataGridRow<Item>
-              key={rowId}
-              selectionCell={{
-                checkboxIndicator: { "aria-label": "Select row" },
-              }}
-            >
+            <DataGridRow<Item> key={rowId}>
               {({ renderCell }) => (
                 <DataGridCell>{renderCell(item)}</DataGridCell>
               )}
@@ -218,6 +223,12 @@ export const DataGridTest = () => {
           )}
         </DataGridBody>
       </DataGrid>
+      </div>
+      <PageController
+        currentPage={current}
+        totalPages={20}
+        toPage={setCurrent}
+      ></PageController>
     </Card>
   );
 };

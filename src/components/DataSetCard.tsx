@@ -38,7 +38,6 @@ import { useNotification } from "../utils/notification/Notification";
 import { useQueryClient } from "@tanstack/react-query";
 import { DataSet } from "../utils/api/models/DataSet";
 
-// 定义组件属性类型
 interface ProjectCardProps {
   dataset: DataSet;
 }
