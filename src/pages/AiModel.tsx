@@ -27,6 +27,7 @@ import {
 } from "@fluentui/react-components";
 import React from "react";
 import PageController from "../components/PageController";
+import { DataGridToolBar } from "../components/DataGridToolBar";
 
 type FileCell = {
   label: string;
@@ -173,6 +174,12 @@ const useStyles = makeStyles({
     padding: "20px",
     width:"80%", height:"80%"
   },
+  cardHeader: {
+    display:"flex", width:"100%",  
+    
+    alignItems: "center",
+    justifyContent:"space-between",
+  },
 });
 export const DataGridTest = () => {
   const styles = useStyles();
@@ -193,9 +200,12 @@ export const DataGridTest = () => {
       <div>
       <CardHeader
         header={
-          <Body1>
+          <div className={styles.cardHeader}>
+            <Body1>
             <b>{listName}</b>
           </Body1>
+          <DataGridToolBar />
+          </div>
         }
       />
       <DataGrid
