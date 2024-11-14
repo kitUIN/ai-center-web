@@ -1,9 +1,10 @@
-import * as React from "react";
 import {
-  FontIncrease24Regular,
-  FontDecrease24Regular,
-  TextFont24Regular,
   MoreHorizontal24Filled,
+  AddSquareFilled,
+  AddSquareRegular,
+  bundleIcon,
+  ArrowClockwiseFilled,
+  ArrowClockwiseRegular,
 } from "@fluentui/react-icons";
 import {
   Toolbar,
@@ -12,37 +13,46 @@ import {
   Menu,
   MenuTrigger,
   MenuPopover,
-  MenuList,
-  MenuItem,
+  DialogTrigger,
+  Dialog,
 } from "@fluentui/react-components";
-import type { ToolbarProps } from "@fluentui/react-components";
+interface ToolBarProps {
+  surface: JSX.Element;
+  moreList: JSX.Element;
+  refreshClick: () => void;
+}
+const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
+const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
+export const DataGridToolBar = (props: Partial<ToolBarProps>) => {
+  return (
+    <Toolbar aria-label="Default" {...props}>
+      {props.surface !== undefined && (
+        <Dialog modalType="modal">
+          <DialogTrigger disableButtonEnhancement>
+            <ToolbarButton icon={<AddButtonIcon />}>新建</ToolbarButton>
+          </DialogTrigger>
+          {props.surface}
+        </Dialog>
+      )}
+      <ToolbarButton icon={<RefreshIcon />} onClick={props.refreshClick}>
+        刷新
+      </ToolbarButton>
 
-export const DataGridToolBar = (props: Partial<ToolbarProps>) => (
-  <Toolbar aria-label="Default" {...props}>
-    <ToolbarButton
-      aria-label="Increase Font Size"
-      appearance="primary"
-      icon={<FontIncrease24Regular />}
-    />
-    <ToolbarButton
-      aria-label="Decrease Font Size"
-      icon={<FontDecrease24Regular />}
-    />
-    <ToolbarButton aria-label="Reset Font Size" icon={<TextFont24Regular />} />
-    <ToolbarDivider />
-    <Menu>
-      <MenuTrigger>
-        <ToolbarButton aria-label="More" icon={<MoreHorizontal24Filled />} />
-      </MenuTrigger>
+      {props.moreList !== undefined && (
+        <>
+          <ToolbarDivider />
+          <Menu>
+            <MenuTrigger>
+              <ToolbarButton
+                aria-label="More"
+                icon={<MoreHorizontal24Filled />}
+              />
+            </MenuTrigger>
 
-      <MenuPopover>
-        <MenuList>
-          <MenuItem>New </MenuItem>
-          <MenuItem>New Window</MenuItem>
-          <MenuItem disabled>Open File</MenuItem>
-          <MenuItem>Open Folder</MenuItem>
-        </MenuList>
-      </MenuPopover>
-    </Menu>
-  </Toolbar>
-);
+            <MenuPopover>{props.moreList}</MenuPopover>
+          </Menu>
+        </>
+      )}
+    </Toolbar>
+  );
+};
