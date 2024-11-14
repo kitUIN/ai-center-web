@@ -1,7 +1,5 @@
 import {
-  MoreHorizontal24Filled,
-  AddSquareFilled,
-  AddSquareRegular,
+  MoreHorizontal24Filled, 
   bundleIcon,
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
@@ -12,27 +10,20 @@ import {
   ToolbarDivider,
   Menu,
   MenuTrigger,
-  MenuPopover,
-  DialogTrigger,
-  Dialog,
+  MenuPopover, 
 } from "@fluentui/react-components";
 interface ToolBarProps {
   surface: JSX.Element;
   moreList: JSX.Element;
   refreshClick: () => void;
 }
-const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
+
 const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 export const DataGridToolBar = (props: Partial<ToolBarProps>) => {
   return (
     <Toolbar aria-label="Default" {...props}>
       {props.surface !== undefined && (
-        <Dialog modalType="modal">
-          <DialogTrigger disableButtonEnhancement>
-            <ToolbarButton icon={<AddButtonIcon />}>新建</ToolbarButton>
-          </DialogTrigger>
-          {props.surface}
-        </Dialog>
+        <>{props.surface}</>
       )}
       <ToolbarButton icon={<RefreshIcon />} onClick={props.refreshClick}>
         刷新

@@ -84,9 +84,14 @@ export interface DetailResponse<T> extends BaseResponse {
   data?: T;
 }
 
+export interface PagedRequest {
+  page: number;
+  limit: number;
+}
+
 export async function fetchGetList<T>(
   api: string,
-  data?: T | null
+  data?: T | PagedRequest | (T & PagedRequest) | null
 ): Promise<ListResponse<T>> {
   return await fetchGet("/api" + api, data as Record<string, unknown>);
 }
@@ -112,7 +117,10 @@ export async function fetchPostUpdate<T>(
   id: ModelId,
   data: T
 ) {
-  return fetchPost(`/api${baseApi}${id}/update/`, data as Record<string, unknown>);
+  return fetchPost(
+    `/api${baseApi}${id}/update/`,
+    data as Record<string, unknown>
+  );
 }
 
 /**
