@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     justifyContent: "center",
   },
   cardContainer: {
-    marginTop: "16px",
+    margin: "4px 0px",
     gap: "16px",
     alignItems: "center",
     display: "flex",

@@ -1,4 +1,4 @@
-import { 
+import {
   bundleIcon,
   FolderOpenFilled,
   FolderOpenRegular,
@@ -57,10 +57,11 @@ const useStyles = makeStyles({
   card: {
     display: "flex",
     justifyContent: "space-between",
+    justifyItems:"center",
     margin: "auto",
-    padding: "20px",
-    width: "90%",
-    height: "90%",
+    padding: "10px 20px",
+    width: "96%",
+    height: "96%",
   },
   cardHeader: {
     display: "flex",
@@ -68,6 +69,9 @@ const useStyles = makeStyles({
 
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  header: {
+    overflowY: "auto", // 添加滚动条支持 
   },
 });
 
@@ -123,25 +127,25 @@ export const AiModelPage = () => {
 
   return (
     <Card className={styles.card}>
-      <div>
-        <CardHeader
-          header={
-            <div className={styles.cardHeader}>
-              <Body1>
-                <b>{listName}</b>
-              </Body1>
-              <DataGridToolBar
-                surface={<AiModelAdd />}
-                refreshClick={() =>
-                  queryClient.refetchQueries({
-                    queryKey: ["aimodels"],
-                    exact: true,
-                  })
-                }
-              />
-            </div>
-          }
-        />
+      <CardHeader
+        header={
+          <div className={styles.cardHeader}>
+            <Body1>
+              <b>{listName}</b>
+            </Body1>
+            <DataGridToolBar
+              surface={<AiModelAdd />}
+              refreshClick={() =>
+                queryClient.refetchQueries({
+                  queryKey: ["aimodels"],
+                  exact: true,
+                })
+              }
+            />
+          </div>
+        }
+      />
+      <div className={styles.header}>
         <Table
           sortable
           {...keyboardNavAttr}
@@ -190,7 +194,7 @@ export const AiModelPage = () => {
                           appearance="transparent"
                           icon={<FolderOpenIcon />}
                           aria-label="FolderOpen"
-                          onClick={()=> navigate(`/model/ai/${item.id}/file`)}
+                          onClick={() => navigate(`/model/ai/${item.id}/file`)}
                         />
                       </Tooltip>
                       <DeleteButton
