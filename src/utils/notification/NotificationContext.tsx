@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)",
-    zIndex: 9999,
+    zIndex: 9000000,
     display: "flex",
     justifyContent: "center",
     width: "auto",
