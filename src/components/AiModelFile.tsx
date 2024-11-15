@@ -1,8 +1,4 @@
-import { 
-  bundleIcon,
-  FolderOpenFilled,
-  FolderOpenRegular,
-} from "@fluentui/react-icons";
+import { EditRegular, EditFilled, bundleIcon } from "@fluentui/react-icons";
 import {
   TableCellLayout,
   makeStyles,
@@ -25,7 +21,6 @@ import {
   createTableColumn,
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
-  Tooltip,
 } from "@fluentui/react-components";
 import React from "react";
 import PageController from "../components/PageController";
@@ -35,9 +30,8 @@ import { aiDelete, aiList } from "../utils/api/AiModel";
 import { AiModelAdd } from "../components/AiModelAdd";
 import { AiModel } from "../utils/api/models/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
-import { useNavigate } from "react-router-dom";
 
-const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
+const EditIcon = bundleIcon(EditFilled, EditRegular);
 const columns: TableColumnDefinition<AiModel>[] = [
   createTableColumn<AiModel>({
     columnId: "name",
@@ -71,7 +65,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const AiModelPage = () => {
+export const AiModelFilePage = () => {
   const styles = useStyles();
   const queryClient = useQueryClient();
   const [current, setCurrent] = React.useState(1);
@@ -118,9 +112,7 @@ export const AiModelPage = () => {
   const focusableGroupAttr = useFocusableGroup({
     tabBehavior: "limited-trap-focus",
   });
-  const listName = "模型列表";
-  const navigate = useNavigate();
-
+  const listName = "模型配置文件";
   return (
     <Card className={styles.card}>
       <div>
@@ -185,14 +177,11 @@ export const AiModelPage = () => {
                     {...focusableGroupAttr}
                   >
                     <TableCellLayout>
-                      <Tooltip content="配置文件" relationship={"label"}>
-                        <Button
-                          appearance="transparent"
-                          icon={<FolderOpenIcon />}
-                          aria-label="FolderOpen"
-                          onClick={()=> navigate(`/model/ai/${item.id}/file`)}
-                        />
-                      </Tooltip>
+                      <Button
+                        appearance="transparent"
+                        icon={<EditIcon />}
+                        aria-label="Edit"
+                      />
                       <DeleteButton
                         id={item.id}
                         queryKey={["aimodels"]}
@@ -215,4 +204,4 @@ export const AiModelPage = () => {
   );
 };
 
-export default AiModelPage;
+export default AiModelFilePage;

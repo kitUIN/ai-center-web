@@ -27,7 +27,7 @@ async function fetchData<T>(
     const response = await fetch(api, options);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(await response.text());
     }
     const responseData: T = await response.json();
     return responseData;

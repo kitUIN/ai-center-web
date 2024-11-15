@@ -53,6 +53,8 @@ export const AiModelAdd = () => {
       } else {
         showNotification(resp.msg, 'error');
       }
+    }).catch((reason:Error) =>{
+      showNotification(reason.message, 'error');
     });
     ev.preventDefault();
   };

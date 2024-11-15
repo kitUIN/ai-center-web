@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)",
-    zIndex: 1000,
+    zIndex: 9999,
     display: "flex",
     justifyContent: "center",
     width: "auto",
@@ -45,7 +45,6 @@ export const NotificationProvider: React.FC<
 
   return (
     <NotificationContext.Provider value={{ showNotification }}>
-      {children}
       {messages.length > 0 && (
         <div className={styles.messageDiv}>
           <MessageBarGroup animate="both" className={styles.messageBarGroup}>
@@ -61,6 +60,7 @@ export const NotificationProvider: React.FC<
           </MessageBarGroup>
         </div>
       )}
+      {children}
     </NotificationContext.Provider>
   );
 };
