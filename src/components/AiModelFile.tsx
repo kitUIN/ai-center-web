@@ -30,6 +30,7 @@ import { aiDelete, aiList } from "../utils/api/AiModel";
 import { AiModelAdd } from "../components/AiModelAdd";
 import { AiModel } from "../utils/api/models/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
+import FileUploadComponent from "./FileUploadComponent";
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 const columns: TableColumnDefinition<AiModel>[] = [
@@ -134,6 +135,7 @@ export const AiModelFilePage = () => {
             </div>
           }
         />
+        <FileUploadComponent></FileUploadComponent>
         <Table
           sortable
           {...keyboardNavAttr}
