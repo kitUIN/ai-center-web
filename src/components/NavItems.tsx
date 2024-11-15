@@ -9,7 +9,27 @@ import {
   DataBase,
   BotSparkle,
 } from "../utils/NavItems";
-import DataGridTest from "../pages/AIModel";
+import AiModelPage from "../pages/AiModel";
+import AiModelFilePage from "./AiModelFile";
+import { motion } from "framer-motion";
+
+interface PageWithAnimationProps {
+  component: JSX.Element;
+}
+
+function PageWithAnimation({ component }: PageWithAnimationProps) {
+  return (
+    <motion.div
+      style={{ width: "100%", height: "100%", display:"flex"}}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {component}
+    </motion.div>
+  );
+}
 export const navItems: NavRouterItem[] = [
   {
     key: "home",
@@ -17,6 +37,7 @@ export const navItems: NavRouterItem[] = [
     header: null,
     icon: <Dashboard />,
     path: "/",
+    show: true,
     element: <Home />,
   },
   {
@@ -24,6 +45,7 @@ export const navItems: NavRouterItem[] = [
     name: "数据集",
     header: null,
     path: "/dataset",
+    show: true,
     icon: <DataBase />,
     element: <DataSetPage />,
   },
@@ -32,6 +54,7 @@ export const navItems: NavRouterItem[] = [
     name: "训练任务",
     header: null,
     path: "/train/task",
+    show: true,
     icon: <EmployeeSpotlight />,
     element: <About />,
   },
@@ -40,15 +63,26 @@ export const navItems: NavRouterItem[] = [
     name: "模型列表",
     header: "模型",
     path: "/model/ai",
+    show: true,
     icon: <Bot />,
-    element: <DataGridTest />,
+    element: <PageWithAnimation component={<AiModelPage />}/>,
   },
   {
     key: "model_power",
     name: "模型能力",
     header: null,
     path: "/model/power",
+    show: true,
     icon: <BotSparkle />,
     element: <About />,
+  },
+  {
+    key: "model_file",
+    name: "模型配置文件",
+    header: null,
+    path: "/model/ai/:id/file",
+    show: false,
+    icon: <BotSparkle />,
+    element: <PageWithAnimation component={<AiModelFilePage />}/>,
   },
 ];

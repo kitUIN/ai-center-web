@@ -15,6 +15,8 @@ import { NavRouterItem } from "./utils/NavItems";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { navItems } from "./components/NavItems";
 import { NotificationProvider } from "./utils/notification/NotificationContext";
+import { AnimatePresence } from "framer-motion";
+
 const useStyles = makeStyles({
   root: {
     overflow: "hidden",
@@ -74,48 +76,53 @@ export const App = () => {
       }
     });
   }, [location.pathname]);
-  return (<NotificationProvider>
-    <div className={styles.root}>
-      <NavDrawer
-        style={{ minWidth: "160px",width: "160px" }}
-        // This a controlled example,
-        // so don't use these props
-        // defaultSelectedValue="1"
-        // defaultSelectedCategoryValue="6"
-        // defaultOpenCategories={['6']}
-        // multiple={isMultiple}
-        // onNavCategoryItemToggle={handleCategoryToggle}
-        onNavItemSelect={handleItemSelect}
-        // openCategories={openCategories}
-        selectedValue={selectedValue}
-        selectedCategoryValue={selectedCategoryValue}
-        type={"inline"}
-        open={true}
-      >
-        <NavDrawerHeader>
-          <Tooltip content="Navigation" relationship="label">
-            <Hamburger />
-          </Tooltip>
-        </NavDrawerHeader>
+  return (
+    <NotificationProvider>
+      <div className={styles.root}>
+        <NavDrawer
+          style={{ minWidth: "160px", width: "160px" }}
+          // This a controlled example,
+          // so don't use these props
+          // defaultSelectedValue="1"
+          // defaultSelectedCategoryValue="6"
+          // defaultOpenCategories={['6']}
+          // multiple={isMultiple}
+          // onNavCategoryItemToggle={handleCategoryToggle}
+          onNavItemSelect={handleItemSelect}
+          // openCategories={openCategories}
+          selectedValue={selectedValue}
+          selectedCategoryValue={selectedCategoryValue}
+          type={"inline"}
+          open={true}
+        >
+          <NavDrawerHeader>
+            <Tooltip content="Navigation" relationship="label">
+              <Hamburger />
+            </Tooltip>
+          </NavDrawerHeader>
 
-        <NavDrawerBody>
-          {/* <AppItem icon={<PersonCircle32Regular />} as="a">
+          <NavDrawerBody>
+            {/* <AppItem icon={<PersonCircle32Regular />} as="a">
             Contoso HR
           </AppItem> */}
-          {navItems.map((item) => (
-            <React.Fragment key={item.key}>
-              {CheckHeader(item)}
-              <NavItem key={item.key} icon={item.icon} value={item.path}>
-                {item.name}
-              </NavItem>
-            </React.Fragment>
-          ))}
-        </NavDrawerBody>
-      </NavDrawer>
-      <QueryClientProvider client={queryClient}>
-        <MyRoutes />
-      </QueryClientProvider>
-    </div>
+            {navItems
+              .filter((x) => x.show)
+              .map((item) => (
+                <React.Fragment key={item.key}>
+                  {CheckHeader(item)}
+                  <NavItem key={item.key} icon={item.icon} value={item.path}>
+                    {item.name}
+                  </NavItem>
+                </React.Fragment>
+              ))}
+          </NavDrawerBody>
+        </NavDrawer>
+        <QueryClientProvider client={queryClient}>
+          <AnimatePresence mode="wait">
+            <MyRoutes />
+          </AnimatePresence>
+        </QueryClientProvider>
+      </div>
     </NotificationProvider>
   );
 };

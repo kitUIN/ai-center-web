@@ -32,6 +32,7 @@ export const DataBase = bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular);
 export type NavRouterItem = {
   key: string;
   path: string;
+  show: boolean;
   name: string;
   header: string | null;
   element: React.ReactNode;
