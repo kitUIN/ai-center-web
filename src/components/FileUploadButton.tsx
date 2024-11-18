@@ -17,35 +17,48 @@ import {
   CloudAddRegular,
 } from "@fluentui/react-icons";
 import { useNotification } from "../utils/notification/Notification";
-import { useQueryClient } from "@tanstack/react-query";
-import { BaseModel, ModelId } from "../utils/api/models/Base";
-import { DetailResponse } from "../utils/api/BaseFetch";
 import FileUploadComponent from "./FileUploadComponent";
+import { AiModel } from "../utils/api/models/AiModel";
 
 const CloudAddIcon = bundleIcon(CloudAddFilled, CloudAddRegular);
 
-interface DeleteButtonProps {
-  queryKey: string[];
-  id: ModelId;
-  DeleteReq: (id: ModelId) => Promise<DetailResponse<BaseModel>>;
+interface FileUploadButtonProps {
+  item: AiModel;
 }
-export const FileUploadButton = ( ) => {
+export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ item }) => {
   // const styles = useStyles();
   const { showNotification } = useNotification();
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const [files, setFiles] = React.useState<File[]>([]); // 存储选中的文件
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const deleteClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-     
-  };
 
+  const uploadClick = async (event: React.MouseEvent) => {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("files", file);
+    }
+
+    const response = await fetch(`/api/ai/${item.id}/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("Uploaded files:", result);
+      showNotification("上传成功", "success");
+      setDialogOpen(false);
+    } else {
+      console.error("Upload failed:", response.statusText);
+    }
+    event.stopPropagation();
+  };
   return (
     <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
         <Tooltip content="上传" relationship="label">
-          <ToolbarButton 
+          <ToolbarButton
             icon={<CloudAddIcon />}
             aria-label="Upload"
             onClick={() => {
@@ -59,9 +72,12 @@ export const FileUploadButton = ( ) => {
       </DialogTrigger>
       <DialogSurface aria-describedby={undefined}>
         <DialogBody>
-        <DialogTitle>上传文件</DialogTitle>
+          <DialogTitle>上传文件</DialogTitle>
           <DialogContent>
-            <FileUploadComponent setFiles={setFiles} files={files}></FileUploadComponent>
+            <FileUploadComponent
+              setFiles={setFiles}
+              files={files}
+            ></FileUploadComponent>
           </DialogContent>
           <DialogActions>
             <Button
@@ -72,10 +88,7 @@ export const FileUploadButton = ( ) => {
             >
               取消
             </Button>
-            <Button
-              appearance="primary"
-              onClick={deleteClick}
-            >
+            <Button appearance="primary" onClick={uploadClick}>
               确认上传
             </Button>
           </DialogActions>

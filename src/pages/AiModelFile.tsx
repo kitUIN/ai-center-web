@@ -26,9 +26,9 @@ import React from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiDelete, aiList } from "../utils/api/AiModel"; 
+import { aiDelete, aiList } from "../utils/api/AiModel";
 import { AiModel } from "../utils/api/models/AiModel";
-import { DeleteButton } from "../components/DeleteButton"; 
+import { DeleteButton } from "../components/DeleteButton";
 import { FileUploadButton } from "../components/FileUploadButton";
 import { useLocation } from "react-router-dom";
 
@@ -114,7 +114,7 @@ export const AiModelFilePage = () => {
     tabBehavior: "limited-trap-focus",
   });
   const location = useLocation();
-  const listName = `${location.state?.name || ''}模型配置文件`;
+  const listName = `${location.state?.name || ""}模型配置文件`;
   return (
     <Card className={styles.card}>
       <div>
@@ -125,7 +125,7 @@ export const AiModelFilePage = () => {
                 <b>{listName}</b>
               </Body1>
               <DataGridToolBar
-                surface={<FileUploadButton />}
+                surface={<FileUploadButton item={location.state} />}
                 refreshClick={() =>
                   queryClient.refetchQueries({
                     queryKey: ["aimodels"],
@@ -136,7 +136,7 @@ export const AiModelFilePage = () => {
             </div>
           }
         />
-         
+
         <Table
           sortable
           {...keyboardNavAttr}
