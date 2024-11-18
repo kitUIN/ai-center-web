@@ -9,9 +9,9 @@ import {
   DataBase,
   BotSparkle,
 } from "../utils/NavItems";
-import AiModelPage from "../pages/AiModel";
-import AiModelFilePage from "./AiModelFile";
+import AiModelPage from "../pages/AiModel"; 
 import { motion } from "framer-motion";
+import AiModelFilePage from "../pages/AiModelFile";
 
 interface PageWithAnimationProps {
   component: JSX.Element;

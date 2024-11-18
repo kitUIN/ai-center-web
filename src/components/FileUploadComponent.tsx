@@ -1,45 +1,52 @@
-import React, { useState } from 'react';
-import { makeStyles, Subtitle1, Subtitle2 } from '@fluentui/react-components';
-import { Button, Text, Tooltip } from '@fluentui/react-components';
-import { FolderOpenIcon } from '@fluentui/react-icons-mdl2';
+import React, { useState } from "react";
+import { makeStyles, Subtitle1, Subtitle2, Tooltip } from "@fluentui/react-components";
+import { Text } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
-  dropZone: {
-    width: '100%',
-    height: '200px',
-    border: '2px dashed #0078d4',
-    borderRadius: '8px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: '#f3f2f1',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
+  uploadZone: {
+    width: "100%",
+    height: "200px",
+    border: "2px dashed #0078d4",
+    borderRadius: "8px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+    backgroundColor: "#f3f2f1",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    "&:hover": {
+      backgroundColor: "#e1f5fe",
+      transform: "scale(1.01)",
+    },
   },
   hover: {
-    backgroundColor: '#e1e1e1',
+    backgroundColor: "#e1e1e1",
   },
   fileName: {
-    marginTop: '10px',
+    marginTop: "10px",
   },
   fileList: {
-    marginTop: '10px',
-    maxHeight: '150px',
-    overflowY: 'auto',
+    marginTop: "10px",
+    maxHeight: "150px",
+    overflowY: "auto",
   },
   fileItem: {
-    marginBottom: '8px',
+    marginBottom: "8px",
   },
 });
-
-const FileUploadComponent: React.FC = () => {
+interface FileUploadComponentProps {
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+}
+const FileUploadComponent: React.FC<FileUploadComponentProps> = ({
+  files,
+  setFiles,
+}) => {
   const [dragOver, setDragOver] = useState(false);
-  const [files, setFiles] = useState<File[]>([]); // 存储选中的文件
 
   const styles = useStyles();
 
-  // 处理文件选择
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
     if (selectedFiles) {
@@ -48,7 +55,6 @@ const FileUploadComponent: React.FC = () => {
     }
   };
 
-  // 处理文件拖拽
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     setDragOver(true);
@@ -69,55 +75,46 @@ const FileUploadComponent: React.FC = () => {
     }
   };
 
-  const handleFileUpload = () => {
-    if (files.length > 0) {
-      // 在此实现文件上传逻辑，例如使用 fetch 或 axios 上传文件
-      files.forEach((file) => {
-        console.log('上传文件:', file);
-      });
-    }
+  const handleUploadZoneClick = () => {
+    document.getElementById("file-input")?.click();
   };
 
   return (
-    <div>
+    <div style={{ padding: "4px 10px" }}>
       <div
-        className={`${styles.dropZone} ${dragOver ? styles.hover : ''}`}
+        className={`${styles.uploadZone} ${dragOver ? styles.hover : ""}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={handleUploadZoneClick}
       >
-        <Subtitle1  >拖拽文件到此区域</Subtitle1>
-        <Subtitle2  >或</Subtitle2>
-        <Subtitle1  >选择文件</Subtitle1>
-        <Button
-          appearance="transparent"
-          onClick={() => document.getElementById('file-input')?.click()}
-        >
-           
-        </Button>
+        <Subtitle1>拖拽文件到此区域</Subtitle1>
+        <Subtitle2>或</Subtitle2>
+        <Subtitle1>选择文件</Subtitle1>
+
         <input
           id="file-input"
           type="file"
-          style={{ display: 'none' }}
-          multiple // 允许选择多个文件
+          style={{ display: "none" }}
+          multiple
           onChange={handleFileSelect}
         />
       </div>
 
       {files.length > 0 && (
-        <div className={styles.fileList}>
-          <Text  >已选择的文件:</Text>
-          {files.map((file, index) => (
-            <div key={index} className={styles.fileItem}>
-              <Text>{file.name}</Text>
-            </div>
-          ))}
+        <div style={{ marginTop: "8px" }}>
+          <Text>已选择的文件:</Text>
+          <div className={styles.fileList}>
+            {files.map((file, index) => (
+              <div key={index} className={styles.fileItem}>
+                <Tooltip content={file.webkitRelativePath || file.name} relationship="label">
+                <Text>{file.name}</Text>
+                </Tooltip>
+              </div>
+            ))}
+          </div>
         </div>
       )}
-
-      <Button onClick={handleFileUpload} disabled={files.length === 0}>
-        上传文件
-      </Button>
     </div>
   );
 };

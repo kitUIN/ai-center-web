@@ -197,7 +197,7 @@ export const AiModelPage = () => {
                             icon={<FolderOpenIcon />}
                             aria-label="FolderOpen"
                             onClick={() =>
-                              navigate(`/model/ai/${item.id}/file`)
+                              navigate(`/model/ai/${item.id}/file`,{ state: item })
                             }
                           />
                         </Tooltip>
