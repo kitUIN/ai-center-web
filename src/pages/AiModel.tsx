@@ -57,7 +57,7 @@ const useStyles = makeStyles({
   card: {
     display: "flex",
     justifyContent: "space-between",
-    justifyItems:"center",
+    justifyItems: "center",
     margin: "auto",
     padding: "10px 20px",
     width: "96%",
@@ -71,7 +71,8 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
   },
   header: {
-    overflowY: "auto", // 添加滚动条支持 
+    overflowY: "auto", // 添加滚动条支持
+    maxHeight:"100%"
   },
 });
 
@@ -127,88 +128,92 @@ export const AiModelPage = () => {
 
   return (
     <Card className={styles.card}>
-      <CardHeader
-        header={
-          <div className={styles.cardHeader}>
-            <Body1>
-              <b>{listName}</b>
-            </Body1>
-            <DataGridToolBar
-              surface={<AiModelAdd />}
-              refreshClick={() =>
-                queryClient.refetchQueries({
-                  queryKey: ["aimodels"],
-                  exact: true,
-                })
-              }
-            />
-          </div>
-        }
-      />
-      <div className={styles.header}>
-        <Table
-          sortable
-          {...keyboardNavAttr}
-          {...columnSizing_unstable.getTableProps()}
-          role="grid"
-          style={{ minWidth: "620px" }}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHeaderCell {...headerSortProps("name")}>
-                名称
-              </TableHeaderCell>
-              <TableHeaderCell {...headerSortProps("update_datetime")}>
-                上次更新
-              </TableHeaderCell>
-              <TableHeaderCell key="actions">操作</TableHeaderCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length === 0 ? (
+      <div  style={{height:"90%"}}>
+        <CardHeader
+          header={
+            <div className={styles.cardHeader}>
+              <Body1>
+                <b>{listName}</b>
+              </Body1>
+              <DataGridToolBar
+                surface={<AiModelAdd />}
+                refreshClick={() =>
+                  queryClient.refetchQueries({
+                    queryKey: ["aimodels"],
+                    exact: true,
+                  })
+                }
+              />
+            </div>
+          }
+        />
+        <div className={styles.header}>
+          <Table
+            sortable
+            {...keyboardNavAttr}
+            {...columnSizing_unstable.getTableProps()}
+            role="grid"
+            style={{ minWidth: "620px" }}
+          >
+            <TableHeader>
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  style={{ textAlign: "center" }}
-                >
-                  暂无数据
-                </TableCell>
+                <TableHeaderCell {...headerSortProps("name")}>
+                  名称
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("update_datetime")}>
+                  上次更新
+                </TableHeaderCell>
+                <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
-            ) : (
-              rows.map(({ item }) => (
-                <TableRow key={item.id}>
-                  <TableCell tabIndex={0} role="gridcell">
-                    <TableCellLayout>{item.name}</TableCellLayout>
-                  </TableCell>
-                  <TableCell tabIndex={0} role="gridcell">
-                    {item.update_datetime}
-                  </TableCell>
+            </TableHeader>
+            <TableBody>
+              {items.length === 0 ? (
+                <TableRow>
                   <TableCell
-                    role="gridcell"
-                    tabIndex={0}
-                    {...focusableGroupAttr}
+                    colSpan={columns.length}
+                    style={{ textAlign: "center" }}
                   >
-                    <TableCellLayout>
-                      <Tooltip content="配置文件" relationship={"label"}>
-                        <Button
-                          appearance="transparent"
-                          icon={<FolderOpenIcon />}
-                          aria-label="FolderOpen"
-                          onClick={() => navigate(`/model/ai/${item.id}/file`)}
-                        />
-                      </Tooltip>
-                      <DeleteButton
-                        id={item.id}
-                        queryKey={["aimodels"]}
-                        DeleteReq={aiDelete}
-                      />
-                    </TableCellLayout>
+                    暂无数据
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                rows.map(({ item }) => (
+                  <TableRow key={item.id}>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout>{item.name}</TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      {item.update_datetime}
+                    </TableCell>
+                    <TableCell
+                      role="gridcell"
+                      tabIndex={0}
+                      {...focusableGroupAttr}
+                    >
+                      <TableCellLayout>
+                        <Tooltip content="配置文件" relationship={"label"}>
+                          <Button
+                            appearance="transparent"
+                            icon={<FolderOpenIcon />}
+                            aria-label="FolderOpen"
+                            onClick={() =>
+                              navigate(`/model/ai/${item.id}/file`)
+                            }
+                          />
+                        </Tooltip>
+                        <DeleteButton
+                          id={item.id}
+                          queryKey={["aimodels"]}
+                          DeleteReq={aiDelete}
+                        />
+                      </TableCellLayout>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <PageController
         currentPage={current}
