@@ -72,7 +72,7 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
   },
   header: {
-    overflowY: "auto", // 添加滚动条支持
+    overflowY: "auto",
     maxHeight:"100%"
   },
 });

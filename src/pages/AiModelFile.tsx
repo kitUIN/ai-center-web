@@ -46,7 +46,10 @@ import { FileUploadButton } from "../components/FileUploadButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelFile } from "../utils/api/models/AiModelFile";
 
-const ClipboardTaskListLtrIcon = bundleIcon(ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular);
+const ClipboardTaskListLtrIcon = bundleIcon(
+  ClipboardTaskListLtrFilled,
+  ClipboardTaskListLtrRegular
+);
 const EyeIcon = bundleIcon(EyeFilled, EyeRegular);
 const columns: TableColumnDefinition<AiModelFile>[] = [
   createTableColumn<AiModelFile>({
@@ -88,6 +91,10 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
   },
   fileNmae: { display: "flex", alignItems: "center", gap: "4px" },
+  header: {
+    overflowY: "auto",
+    maxHeight: "100%",
+  },
 });
 
 export const AiModelFilePage = () => {
@@ -143,15 +150,15 @@ export const AiModelFilePage = () => {
   const listName = `${location.state?.name || ""}模型文件列表`;
   const [flag, setFlag] = React.useState(true);
   useEffect(() => {
-    if(flag){
+    if (flag) {
       setFlag(false);
-      return
+      return;
     }
     queryClient.refetchQueries({
       queryKey: ["aimodels"],
       exact: true,
-    })
-    console.log(current)
+    });
+    console.log(current);
   }, [current]);
   return (
     <Card className={styles.card}>
@@ -171,7 +178,9 @@ export const AiModelFilePage = () => {
                         icon={<ClipboardTaskListLtrIcon />}
                         aria-label="ClipboardTask"
                         onClick={() => {
-                          navigate(`/model/ai/${id}/plan`,{ state: location.state })
+                          navigate(`/model/ai/${id}/plan`, {
+                            state: location.state,
+                          });
                         }}
                       >
                         训练计划
@@ -189,85 +198,86 @@ export const AiModelFilePage = () => {
             </div>
           }
         />
-
-        <Table
-          sortable
-          {...keyboardNavAttr}
-          {...columnSizing_unstable.getTableProps()}
-          role="grid"
-          style={{ minWidth: "620px" }}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHeaderCell {...headerSortProps("name")}>
-                名称
-              </TableHeaderCell>
-              <TableHeaderCell {...headerSortProps("update_datetime")}>
-                上次更新
-              </TableHeaderCell>
-              <TableHeaderCell key="actions">操作</TableHeaderCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length === 0 ? (
+        <div className={styles.header}>
+          <Table
+            sortable
+            {...keyboardNavAttr}
+            {...columnSizing_unstable.getTableProps()}
+            role="grid"
+            style={{ minWidth: "620px" }}
+          >
+            <TableHeader>
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  style={{ textAlign: "center" }}
-                >
-                  暂无数据
-                </TableCell>
+                <TableHeaderCell {...headerSortProps("name")}>
+                  名称
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("update_datetime")}>
+                  上次更新
+                </TableHeaderCell>
+                <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
-            ) : (
-              rows.map(({ item }) => (
-                <TableRow key={item.id}>
-                  <TableCell tabIndex={0} role="gridcell">
-                    <TableCellLayout
-                      media={
-                        isImg(item.file) ? (
-                          <ImageRegular />
-                        ) : (
-                          <DocumentRegular />
-                        )
-                      }
-                    >
-                      {item.file_name}
-                    </TableCellLayout>
-                  </TableCell>
-                  <TableCell tabIndex={0} role="gridcell">
-                    {item.update_datetime}
-                  </TableCell>
+            </TableHeader>
+            <TableBody>
+              {items.length === 0 ? (
+                <TableRow>
                   <TableCell
-                    role="gridcell"
-                    tabIndex={0}
-                    {...focusableGroupAttr}
+                    colSpan={columns.length}
+                    style={{ textAlign: "center" }}
                   >
-                    <TableCellLayout>
-                      <Popover>
-                        <PopoverTrigger disableButtonEnhancement>
-                          <Button
-                            appearance="transparent"
-                            icon={<EyeIcon />}
-                            aria-label="See"
-                          />
-                        </PopoverTrigger>
-
-                        <PopoverSurface tabIndex={-1}>
-                          <Image src={item.file} width={300}></Image>
-                        </PopoverSurface>
-                      </Popover>
-                      <DeleteButton
-                        id={item.id}
-                        queryKey={["aifiles"]}
-                        DeleteReq={(file_id) => aiFileDelete(id, file_id)}
-                      />
-                    </TableCellLayout>
+                    暂无数据
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                rows.map(({ item }) => (
+                  <TableRow key={item.id}>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout
+                        media={
+                          isImg(item.file) ? (
+                            <ImageRegular />
+                          ) : (
+                            <DocumentRegular />
+                          )
+                        }
+                      >
+                        {item.file_name}
+                      </TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      {item.update_datetime}
+                    </TableCell>
+                    <TableCell
+                      role="gridcell"
+                      tabIndex={0}
+                      {...focusableGroupAttr}
+                    >
+                      <TableCellLayout>
+                        <Popover>
+                          <PopoverTrigger disableButtonEnhancement>
+                            <Button
+                              appearance="transparent"
+                              icon={<EyeIcon />}
+                              aria-label="See"
+                            />
+                          </PopoverTrigger>
+
+                          <PopoverSurface tabIndex={-1}>
+                            <Image src={item.file} width={300}></Image>
+                          </PopoverSurface>
+                        </Popover>
+                        <DeleteButton
+                          id={item.id}
+                          queryKey={["aifiles"]}
+                          DeleteReq={(file_id) => aiFileDelete(id, file_id)}
+                        />
+                      </TableCellLayout>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <PageController
         currentPage={current}

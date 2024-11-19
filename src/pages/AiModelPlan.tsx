@@ -1,5 +1,5 @@
 import {
-  bundleIcon, 
+  bundleIcon,
   FolderOpenFilled,
   FolderOpenRegular,
 } from "@fluentui/react-icons";
@@ -35,7 +35,7 @@ import { aiFileDelete, aiPlanList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelPlan } from "../utils/api/models/AiModelPlan";
-const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular); 
+const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
 const columns: TableColumnDefinition<AiModelPlan>[] = [
   createTableColumn<AiModelPlan>({
     columnId: "name",
@@ -67,6 +67,10 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
   },
   fileNmae: { display: "flex", alignItems: "center", gap: "4px" },
+  header: {
+    overflowY: "auto",
+    maxHeight: "100%",
+  },
 });
 
 export const AiModelPlanPage = () => {
@@ -169,63 +173,63 @@ export const AiModelPlanPage = () => {
             </div>
           }
         />
-
-        <Table
-          sortable
-          {...keyboardNavAttr}
-          {...columnSizing_unstable.getTableProps()}
-          role="grid"
-          style={{ minWidth: "620px" }}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHeaderCell {...headerSortProps("name")}>
-                名称
-              </TableHeaderCell>
-              <TableHeaderCell {...headerSortProps("update_datetime")}>
-                上次更新
-              </TableHeaderCell>
-              <TableHeaderCell key="actions">操作</TableHeaderCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length === 0 ? (
+        <div className={styles.header}>
+          <Table
+            sortable
+            {...keyboardNavAttr}
+            {...columnSizing_unstable.getTableProps()}
+            role="grid"
+            style={{ minWidth: "620px" }}
+          >
+            <TableHeader>
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  style={{ textAlign: "center" }}
-                >
-                  暂无数据
-                </TableCell>
+                <TableHeaderCell {...headerSortProps("name")}>
+                  名称
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("update_datetime")}>
+                  上次更新
+                </TableHeaderCell>
+                <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
-            ) : (
-              rows.map(({ item }) => (
-                <TableRow key={item.id}>
-                  <TableCell tabIndex={0} role="gridcell">
-                    <TableCellLayout>{item.name}</TableCellLayout>
-                  </TableCell>
-                  <TableCell tabIndex={0} role="gridcell">
-                    {item.update_datetime}
-                  </TableCell>
+            </TableHeader>
+            <TableBody>
+              {items.length === 0 ? (
+                <TableRow>
                   <TableCell
-                    role="gridcell"
-                    tabIndex={0}
-                    {...focusableGroupAttr}
+                    colSpan={columns.length}
+                    style={{ textAlign: "center" }}
                   >
-                    <TableCellLayout>
-                  
-                      <DeleteButton
-                        id={item.id}
-                        queryKey={["aiPlans"]}
-                        DeleteReq={(file_id) => aiFileDelete(id, file_id)}
-                      />
-                    </TableCellLayout>
+                    暂无数据
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                rows.map(({ item }) => (
+                  <TableRow key={item.id}>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout>{item.name}</TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      {item.update_datetime}
+                    </TableCell>
+                    <TableCell
+                      role="gridcell"
+                      tabIndex={0}
+                      {...focusableGroupAttr}
+                    >
+                      <TableCellLayout>
+                        <DeleteButton
+                          id={item.id}
+                          queryKey={["aiPlans"]}
+                          DeleteReq={(file_id) => aiFileDelete(id, file_id)}
+                        />
+                      </TableCellLayout>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <PageController
         currentPage={current}
