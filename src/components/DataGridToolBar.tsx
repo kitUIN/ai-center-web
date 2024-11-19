@@ -22,9 +22,7 @@ const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
 export const DataGridToolBar = (props: Partial<ToolBarProps>) => {
   return (
     <Toolbar aria-label="Default" {...props}>
-      {props.surface !== undefined && (
-        <>{props.surface}</>
-      )}
+      {props.surface !== undefined && props.surface}
       <ToolbarButton icon={<RefreshIcon />} onClick={props.refreshClick}>
         刷新
       </ToolbarButton>

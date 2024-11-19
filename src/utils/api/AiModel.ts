@@ -10,6 +10,7 @@ import {
 import { ModelId } from "./models/Base";
 import { AiModel } from "./models/AiModel";
 import { AiModelFile } from "./models/AiModelFile";
+import { AiModelPlan } from "./models/AiModelPlan";
 
 const baseApi = "/ai/";
 /**
@@ -69,4 +70,24 @@ export async function aiFileList(
  */
 export async function aiFileDelete(id: ModelId, file_id: ModelId) {
   return fetchPost<DetailResponse<AiModelFile>>(`/api${baseApi}${id}/file/${file_id}/delete/`);
+}
+/**
+ * 查询计划列表
+ */
+export async function aiPlanList(
+  id: ModelId,
+  page: number = 1,
+  limit: number = 20
+) {
+  return fetchGetList<AiModelPlan>(`${baseApi}/${id}/plan`, {
+    page: page,
+    limit: limit,
+  });
+}
+/**
+ * 删除单个计划
+ * @param id id
+ */
+export async function aiPlanDelete(id: ModelId, file_id: ModelId) {
+  return fetchPost<DetailResponse<AiModelPlan>>(`/api${baseApi}${id}/plan/${file_id}/delete/`);
 }

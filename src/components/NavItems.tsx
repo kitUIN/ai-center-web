@@ -12,6 +12,7 @@ import {
 import AiModelPage from "../pages/AiModel"; 
 import { motion } from "framer-motion";
 import AiModelFilePage from "../pages/AiModelFile";
+import { AiModelPlanPage } from "../pages/AiModelPlan";
 
 interface PageWithAnimationProps {
   component: JSX.Element;
@@ -78,11 +79,20 @@ export const navItems: NavRouterItem[] = [
   },
   {
     key: "model_file",
-    name: "模型配置文件",
+    name: "模型相关文件",
     header: null,
     path: "/model/ai/:id/file",
     show: false,
     icon: <BotSparkle />,
     element: <PageWithAnimation component={<AiModelFilePage />}/>,
+  },
+  {
+    key: "model_plan",
+    name: "模型训练计划",
+    header: null,
+    path: "/model/ai/:id/plan",
+    show: false,
+    icon: <BotSparkle />,
+    element: <PageWithAnimation component={<AiModelPlanPage />}/>,
   },
 ];

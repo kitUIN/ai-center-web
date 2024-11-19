@@ -1,11 +1,7 @@
 import {
-  bundleIcon,
-  ClipboardTaskListLtrFilled,
-  ClipboardTaskListLtrRegular,
-  DocumentRegular,
-  EyeFilled,
-  EyeRegular,
-  ImageRegular,
+  bundleIcon, 
+  FolderOpenFilled,
+  FolderOpenRegular,
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -19,7 +15,6 @@ import {
   Table,
   TableHeader,
   TableHeaderCell,
-  Button,
   useArrowNavigationGroup,
   useFocusableGroup,
   TableColumnId,
@@ -29,10 +24,6 @@ import {
   createTableColumn,
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
-  Popover,
-  Image,
-  PopoverTrigger,
-  PopoverSurface,
   Tooltip,
   ToolbarButton,
 } from "@fluentui/react-components";
@@ -40,37 +31,25 @@ import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiFileDelete, aiFileList } from "../utils/api/AiModel";
+import { aiFileDelete, aiPlanList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
-import { FileUploadButton } from "../components/FileUploadButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AiModelFile } from "../utils/api/models/AiModelFile";
-
-const ClipboardTaskListLtrIcon = bundleIcon(ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular);
-const EyeIcon = bundleIcon(EyeFilled, EyeRegular);
-const columns: TableColumnDefinition<AiModelFile>[] = [
-  createTableColumn<AiModelFile>({
-    columnId: "file_name",
+import { AiModelPlan } from "../utils/api/models/AiModelPlan";
+const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular); 
+const columns: TableColumnDefinition<AiModelPlan>[] = [
+  createTableColumn<AiModelPlan>({
+    columnId: "name",
     compare: (a, b) => {
-      return a.file_name.localeCompare(b.file_name);
+      return a.name.localeCompare(b.name);
     },
   }),
-  createTableColumn<AiModelFile>({
+  createTableColumn<AiModelPlan>({
     columnId: "update_datetime",
     compare: (a, b) => {
       return a.update_datetime?.localeCompare(b.update_datetime!) ?? 1;
     },
   }),
 ];
-function isImg(path: string) {
-  const imgs = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"];
-
-  for (let index = 0; index < imgs.length; index++) {
-    const element = imgs[index];
-    if (path.endsWith(element)) return true;
-  }
-  return false;
-}
 const useStyles = makeStyles({
   card: {
     display: "flex",
@@ -90,15 +69,15 @@ const useStyles = makeStyles({
   fileNmae: { display: "flex", alignItems: "center", gap: "4px" },
 });
 
-export const AiModelFilePage = () => {
+export const AiModelPlanPage = () => {
   const { id } = useParams();
   const styles = useStyles();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [current, setCurrent] = React.useState(1);
+  const navigate = useNavigate();
   const aiQuery = useQuery({
-    queryKey: ["aifiles"],
-    queryFn: () => aiFileList(id, current),
+    queryKey: ["aiPlans"],
+    queryFn: () => aiPlanList(id, current),
     staleTime: 0,
   });
   const items = aiQuery.data?.data?.data ?? [];
@@ -140,18 +119,18 @@ export const AiModelFilePage = () => {
     tabBehavior: "limited-trap-focus",
   });
   const location = useLocation();
-  const listName = `${location.state?.name || ""}模型文件列表`;
+  const listName = `${location.state?.name || ""}模型训练计划`;
   const [flag, setFlag] = React.useState(true);
   useEffect(() => {
-    if(flag){
+    if (flag) {
       setFlag(false);
-      return
+      return;
     }
     queryClient.refetchQueries({
       queryKey: ["aimodels"],
       exact: true,
-    })
-    console.log(current)
+    });
+    console.log(current);
   }, [current]);
   return (
     <Card className={styles.card}>
@@ -165,23 +144,24 @@ export const AiModelFilePage = () => {
               <DataGridToolBar
                 surface={
                   <>
-                    <FileUploadButton item={location.state} />
-                    <Tooltip content="训练计划" relationship="label">
+                    <Tooltip content="文件列表" relationship="label">
                       <ToolbarButton
-                        icon={<ClipboardTaskListLtrIcon />}
-                        aria-label="ClipboardTask"
+                        icon={<FolderOpenIcon />}
+                        aria-label="FolderOpen"
                         onClick={() => {
-                          navigate(`/model/ai/${id}/plan`,{ state: location.state })
+                          navigate(`/model/ai/${id}/file`, {
+                            state: location.state,
+                          });
                         }}
                       >
-                        训练计划
+                        文件列表
                       </ToolbarButton>
                     </Tooltip>
                   </>
                 }
                 refreshClick={() =>
                   queryClient.refetchQueries({
-                    queryKey: ["aifiles"],
+                    queryKey: ["aiPlans"],
                     exact: true,
                   })
                 }
@@ -222,17 +202,7 @@ export const AiModelFilePage = () => {
               rows.map(({ item }) => (
                 <TableRow key={item.id}>
                   <TableCell tabIndex={0} role="gridcell">
-                    <TableCellLayout
-                      media={
-                        isImg(item.file) ? (
-                          <ImageRegular />
-                        ) : (
-                          <DocumentRegular />
-                        )
-                      }
-                    >
-                      {item.file_name}
-                    </TableCellLayout>
+                    <TableCellLayout>{item.name}</TableCellLayout>
                   </TableCell>
                   <TableCell tabIndex={0} role="gridcell">
                     {item.update_datetime}
@@ -243,22 +213,10 @@ export const AiModelFilePage = () => {
                     {...focusableGroupAttr}
                   >
                     <TableCellLayout>
-                      <Popover>
-                        <PopoverTrigger disableButtonEnhancement>
-                          <Button
-                            appearance="transparent"
-                            icon={<EyeIcon />}
-                            aria-label="See"
-                          />
-                        </PopoverTrigger>
-
-                        <PopoverSurface tabIndex={-1}>
-                          <Image src={item.file} width={300}></Image>
-                        </PopoverSurface>
-                      </Popover>
+                  
                       <DeleteButton
                         id={item.id}
-                        queryKey={["aifiles"]}
+                        queryKey={["aiPlans"]}
                         DeleteReq={(file_id) => aiFileDelete(id, file_id)}
                       />
                     </TableCellLayout>
@@ -278,4 +236,4 @@ export const AiModelFilePage = () => {
   );
 };
 
-export default AiModelFilePage;
+export default AiModelPlanPage;
