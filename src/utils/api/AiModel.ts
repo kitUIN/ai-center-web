@@ -51,22 +51,22 @@ export async function aiDelete(id: ModelId) {
   return fetchPostDelete<AiModel>(baseApi, id);
 }
 /**
- * 查询列表
+ * 查询文件列表
  */
 export async function aiFileList(
   id: ModelId,
   page: number = 1,
   limit: number = 20
 ) {
-  return fetchGetList<AiModelFile>(`${baseApi}/${id}/files`, {
+  return fetchGetList<AiModelFile>(`${baseApi}/${id}/file`, {
     page: page,
     limit: limit,
   });
 }
 /**
- * 删除单个
+ * 删除单个文件
  * @param id id
  */
 export async function aiFileDelete(id: ModelId, file_id: ModelId) {
-  return fetchPost<DetailResponse<AiModelFile>>(`/api${baseApi}${id}/files/${file_id}/delete/`);
+  return fetchPost<DetailResponse<AiModelFile>>(`/api${baseApi}${id}/file/${file_id}/delete/`);
 }

@@ -27,7 +27,7 @@ import {
   useTableColumnSizing_unstable,
   Tooltip,
 } from "@fluentui/react-components";
-import React from "react";
+import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,8 +109,19 @@ export const AiModelPage = () => {
       }),
       useTableColumnSizing_unstable({ columnSizingOptions }),
     ]
-  );
-
+  ); 
+  const [flag, setFlag] = React.useState(true);
+  useEffect(() => {
+    if(flag){
+      setFlag(false);
+      return
+    }
+    queryClient.refetchQueries({
+      queryKey: ["aimodels"],
+      exact: true,
+    })
+    console.log(current)
+  }, [current]);
   const headerSortProps = (columnId: TableColumnId) => ({
     onClick: (e: React.MouseEvent) => {
       toggleColumnSort(e, columnId);
@@ -126,7 +137,6 @@ export const AiModelPage = () => {
   });
   const listName = "模型列表";
   const navigate = useNavigate();
-
   return (
     <Card className={styles.card}>
       <div  style={{height:"90%"}}>
@@ -208,7 +218,7 @@ export const AiModelPage = () => {
                             icon={<ClipboardTaskListLtrIcon />}
                             aria-label="TrainPlan"
                             onClick={() =>
-                              navigate(`/model/ai/${item.id}/file`,{ state: item })
+                              navigate(`/model/ai/${item.id}/plan`,{ state: item })
                             }
                           />
                         </Tooltip>
@@ -228,7 +238,7 @@ export const AiModelPage = () => {
       </div>
       <PageController
         currentPage={current}
-        totalPages={aiQuery.data?.data?.page ?? 1}
+        totalPages={aiQuery.data?.data?.pages ?? 1}
         toPage={setCurrent}
       ></PageController>
     </Card>
