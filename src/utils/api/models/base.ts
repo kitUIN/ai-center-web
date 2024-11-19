@@ -1,4 +1,4 @@
-export type ModelId = string | number | null;
+export type ModelId = string | number | null | undefined;
 /**
  * 基础模型
  * @link https://github.com/kitUIN/AiCenter/blob/master/utils/base_model.py

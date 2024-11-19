@@ -8,7 +8,8 @@ function objectToQueryParams(data: Record<string, string>): string {
 async function fetchData<T>(
   method: HttpMethod,
   api: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
+  files?: File[]
 ): Promise<T> {
   const options: RequestInit = {
     method: method.toUpperCase(),
@@ -16,11 +17,19 @@ async function fetchData<T>(
       "Content-Type": "application/json",
     },
   };
-  if (method === "GET" && data) {
-    const queryParams = objectToQueryParams(data as Record<string, string>);
-    api = `${api}?${queryParams}`;
+  if (method === "GET") {
+    if (data) {
+      const queryParams = objectToQueryParams(data as Record<string, string>);
+      api = `${api}?${queryParams}`;
+    } else if (files) {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append("files", file);
+      }
+      options.body = formData;
+    }
   } else if ((method === "POST" || method === "PUT") && data) {
-    options.body = JSON.stringify(data); // 将数据转换为 JSON 格式
+    options.body = JSON.stringify(data);
   }
 
   try {
@@ -48,6 +57,10 @@ export async function fetchPost<T>(
   data?: Record<string, unknown>
 ): Promise<T> {
   return await fetchData("POST", api, data);
+}
+
+export async function fetchUpload<T>(api: string, files?: File[]): Promise<T> {
+  return await fetchData("POST", api, {}, files);
 }
 
 export interface ListResponseData<T> {
@@ -100,6 +113,12 @@ export async function fetchGetDetail<T>(
   id: ModelId
 ): Promise<DetailResponse<T>> {
   return await fetchGet(`/api${baseApi}${id}/`);
+}
+export async function fetchUploadDetail<T>(
+  url: string,
+  files: File[]
+): Promise<DetailResponse<T>> {
+  return await fetchUpload(`/api${url}/`, files);
 }
 
 export async function fetchPostCreate<T>(

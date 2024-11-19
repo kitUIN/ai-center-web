@@ -1,12 +1,15 @@
 import {
+  DetailResponse,
   fetchGetDetail,
   fetchGetList,
+  fetchPost,
   fetchPostCreate,
   fetchPostDelete,
   fetchPostUpdate,
 } from "./BaseFetch";
 import { ModelId } from "./models/Base";
 import { AiModel } from "./models/AiModel";
+import { AiModelFile } from "./models/AiModelFile";
 
 const baseApi = "/ai/";
 /**
@@ -46,4 +49,24 @@ export async function aiUpdate(id: ModelId, data: AiModel) {
  */
 export async function aiDelete(id: ModelId) {
   return fetchPostDelete<AiModel>(baseApi, id);
+}
+/**
+ * 查询列表
+ */
+export async function aiFileList(
+  id: ModelId,
+  page: number = 1,
+  limit: number = 20
+) {
+  return fetchGetList<AiModelFile>(`${baseApi}/${id}/files`, {
+    page: page,
+    limit: limit,
+  });
+}
+/**
+ * 删除单个
+ * @param id id
+ */
+export async function aiFileDelete(id: ModelId, file_id: ModelId) {
+  return fetchPost<DetailResponse<AiModelFile>>(`/api${baseApi}${id}/files/${file_id}/delete/`);
 }

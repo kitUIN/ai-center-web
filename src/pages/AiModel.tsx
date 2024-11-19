@@ -1,7 +1,7 @@
 import {
   bundleIcon,
   FolderOpenFilled,
-  FolderOpenRegular,
+  FolderOpenRegular,ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -38,6 +38,7 @@ import { DeleteButton } from "../components/DeleteButton";
 import { useNavigate } from "react-router-dom";
 
 const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
+const ClipboardTaskListLtrIcon = bundleIcon(ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular);
 const columns: TableColumnDefinition<AiModel>[] = [
   createTableColumn<AiModel>({
     columnId: "name",
@@ -191,11 +192,21 @@ export const AiModelPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
-                        <Tooltip content="配置文件" relationship={"label"}>
+                        <Tooltip content="文件列表" relationship={"label"}>
                           <Button
                             appearance="transparent"
                             icon={<FolderOpenIcon />}
                             aria-label="FolderOpen"
+                            onClick={() =>
+                              navigate(`/model/ai/${item.id}/file`,{ state: item })
+                            }
+                          />
+                        </Tooltip>
+                        <Tooltip content="训练计划" relationship={"label"}>
+                          <Button
+                            appearance="transparent"
+                            icon={<ClipboardTaskListLtrIcon />}
+                            aria-label="TrainPlan"
                             onClick={() =>
                               navigate(`/model/ai/${item.id}/file`,{ state: item })
                             }

@@ -1,4 +1,10 @@
-import { EditRegular, EditFilled, bundleIcon } from "@fluentui/react-icons";
+import {
+  bundleIcon,
+  DocumentRegular,
+  EyeFilled,
+  EyeRegular,
+  ImageRegular,
+} from "@fluentui/react-icons";
 import {
   TableCellLayout,
   makeStyles,
@@ -21,41 +27,54 @@ import {
   createTableColumn,
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
+  Popover,
+  Image,
+  PopoverTrigger,
+  PopoverSurface,
+  Text,
 } from "@fluentui/react-components";
 import React from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiDelete, aiList } from "../utils/api/AiModel";
-import { AiModel } from "../utils/api/models/AiModel";
+import { aiFileDelete, aiFileList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { FileUploadButton } from "../components/FileUploadButton";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { AiModelFile } from "../utils/api/models/AiModelFile";
 
-const EditIcon = bundleIcon(EditFilled, EditRegular);
-const columns: TableColumnDefinition<AiModel>[] = [
-  createTableColumn<AiModel>({
-    columnId: "name",
+const EyeIcon = bundleIcon(EyeFilled, EyeRegular);
+const columns: TableColumnDefinition<AiModelFile>[] = [
+  createTableColumn<AiModelFile>({
+    columnId: "file_name",
     compare: (a, b) => {
-      return a.name.localeCompare(b.name);
+      return a.file_name.localeCompare(b.file_name);
     },
   }),
-  createTableColumn<AiModel>({
+  createTableColumn<AiModelFile>({
     columnId: "update_datetime",
     compare: (a, b) => {
       return a.update_datetime?.localeCompare(b.update_datetime!) ?? 1;
     },
   }),
 ];
+function isImg(path: string) {
+  const imgs = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"];
 
+  for (let index = 0; index < imgs.length; index++) {
+    const element = imgs[index];
+    if (path.endsWith(element)) return true;
+  }
+  return false;
+}
 const useStyles = makeStyles({
   card: {
     display: "flex",
     justifyContent: "space-between",
     margin: "auto",
     padding: "20px",
-    width: "90%",
-    height: "90%",
+    width: "96%",
+    height: "96%",
   },
   cardHeader: {
     display: "flex",
@@ -64,15 +83,17 @@ const useStyles = makeStyles({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  fileNmae: { display: "flex", alignItems: "center", gap: "4px" },
 });
 
 export const AiModelFilePage = () => {
+  const { id } = useParams();
   const styles = useStyles();
   const queryClient = useQueryClient();
   const [current, setCurrent] = React.useState(1);
   const aiQuery = useQuery({
-    queryKey: ["aimodels"],
-    queryFn: () => aiList(current),
+    queryKey: ["aifiles"],
+    queryFn: () => aiFileList(id, current),
     staleTime: 0,
   });
   const items = aiQuery.data?.data?.data ?? [];
@@ -128,7 +149,7 @@ export const AiModelFilePage = () => {
                 surface={<FileUploadButton item={location.state} />}
                 refreshClick={() =>
                   queryClient.refetchQueries({
-                    queryKey: ["aimodels"],
+                    queryKey: ["aifiles"],
                     exact: true,
                   })
                 }
@@ -169,7 +190,17 @@ export const AiModelFilePage = () => {
               rows.map(({ item }) => (
                 <TableRow key={item.id}>
                   <TableCell tabIndex={0} role="gridcell">
-                    <TableCellLayout>{item.name}</TableCellLayout>
+                    <TableCellLayout
+                      media={
+                        isImg(item.file) ? (
+                          <ImageRegular />
+                        ) : (
+                          <DocumentRegular />
+                        )
+                      }
+                    >
+                      {item.file_name}
+                    </TableCellLayout>
                   </TableCell>
                   <TableCell tabIndex={0} role="gridcell">
                     {item.update_datetime}
@@ -180,15 +211,23 @@ export const AiModelFilePage = () => {
                     {...focusableGroupAttr}
                   >
                     <TableCellLayout>
-                      <Button
-                        appearance="transparent"
-                        icon={<EditIcon />}
-                        aria-label="Edit"
-                      />
+                      <Popover>
+                        <PopoverTrigger disableButtonEnhancement>
+                          <Button
+                            appearance="transparent"
+                            icon={<EyeIcon />}
+                            aria-label="See"
+                          />
+                        </PopoverTrigger>
+
+                        <PopoverSurface tabIndex={-1}>
+                          <Image src={item.file} width={300}></Image>
+                        </PopoverSurface>
+                      </Popover>
                       <DeleteButton
                         id={item.id}
-                        queryKey={["aimodels"]}
-                        DeleteReq={aiDelete}
+                        queryKey={["aifiles"]}
+                        DeleteReq={(file_id) => aiFileDelete(id, file_id)}
                       />
                     </TableCellLayout>
                   </TableCell>
