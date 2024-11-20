@@ -33,6 +33,7 @@ import {
   Image,
   PopoverTrigger,
   PopoverSurface,
+  Text,
   Tooltip,
   ToolbarButton,
 } from "@fluentui/react-components";
@@ -62,6 +63,12 @@ const columns: TableColumnDefinition<AiModelFile>[] = [
     columnId: "update_datetime",
     compare: (a, b) => {
       return a.update_datetime?.localeCompare(b.update_datetime!) ?? 1;
+    },
+  }),
+  createTableColumn<AiModelFile>({
+    columnId: "file",
+    compare: (a, b) => {
+      return a.file?.localeCompare(b.file!) ?? 1;
     },
   }),
 ];
@@ -214,6 +221,9 @@ export const AiModelFilePage = () => {
                 <TableHeaderCell {...headerSortProps("update_datetime")}>
                   上次更新
                 </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("file")}>
+                  路径
+                </TableHeaderCell>
                 <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
             </TableHeader>
@@ -246,6 +256,9 @@ export const AiModelFilePage = () => {
                     <TableCell tabIndex={0} role="gridcell">
                       {item.update_datetime}
                     </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout truncate>{item.file}</TableCellLayout>
+                    </TableCell>
                     <TableCell
                       role="gridcell"
                       tabIndex={0}
@@ -254,15 +267,21 @@ export const AiModelFilePage = () => {
                       <TableCellLayout>
                         <Popover>
                           <PopoverTrigger disableButtonEnhancement>
-                            <Button
-                              appearance="transparent"
-                              icon={<EyeIcon />}
-                              aria-label="See"
-                            />
+                            <Tooltip content={"预览"} relationship={"label"}>
+                              <Button
+                                appearance="transparent"
+                                icon={<EyeIcon />}
+                                aria-label="See"
+                              />
+                            </Tooltip>
                           </PopoverTrigger>
 
                           <PopoverSurface tabIndex={-1}>
-                            <Image src={item.file} width={300}></Image>
+                            {isImg(item.file) ? (
+                              <Image src={item.file} width={300}></Image>
+                            ) : (
+                              <Text>{item.file}</Text>
+                            )}
                           </PopoverSurface>
                         </Popover>
                         <DeleteButton
