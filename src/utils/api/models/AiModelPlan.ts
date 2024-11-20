@@ -1,4 +1,4 @@
-import { BaseModel } from "./Base";
+import { BaseModel, ModelId } from "./Base";
 /**
  * 模型
  * @link https://github.com/kitUIN/AiCenter/blob/master/center/models/center_file.py
@@ -11,7 +11,7 @@ export interface AiModelPlan extends BaseModel {
   /**
    * 模型id
    */
-  ai_model: number;
+  ai_model: ModelId;
   /**
    * 启动命令
    */
@@ -21,3 +21,12 @@ export interface AiModelPlan extends BaseModel {
    */
   args: string;
 }
+export const defaultAiModelPlan: AiModelPlan = {
+  name: "",
+  create_datetime: null,
+  update_datetime: null,
+  id: null,
+  ai_model: 0,
+  startup: "",
+  args: "{}"
+};

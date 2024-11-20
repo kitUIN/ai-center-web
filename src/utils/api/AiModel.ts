@@ -2,6 +2,7 @@ import {
   DetailResponse,
   fetchGetDetail,
   fetchGetList,
+  fetchGetSimple,
   fetchPost,
   fetchPostCreate,
   fetchPostDelete,
@@ -59,10 +60,18 @@ export async function aiFileList(
   page: number = 1,
   limit: number = 20
 ) {
-  return fetchGetList<AiModelFile>(`${baseApi}/${id}/file`, {
+  return fetchGetList<AiModelFile>(`${baseApi}${id}/file`, {
     page: page,
     limit: limit,
   });
+}
+/**
+ * 查询文件列表
+ */
+export async function aiFileSimpleList(
+  id: ModelId
+) {
+  return fetchGetSimple<AiModelFile[]>(`${baseApi}${id}/file/simple`);
 }
 /**
  * 删除单个文件
@@ -79,7 +88,7 @@ export async function aiPlanList(
   page: number = 1,
   limit: number = 20
 ) {
-  return fetchGetList<AiModelPlan>(`${baseApi}/${id}/plan`, {
+  return fetchGetList<AiModelPlan>(`${baseApi}${id}/plan`, {
     page: page,
     limit: limit,
   });
@@ -90,4 +99,10 @@ export async function aiPlanList(
  */
 export async function aiPlanDelete(id: ModelId, file_id: ModelId) {
   return fetchPost<DetailResponse<AiModelPlan>>(`/api${baseApi}${id}/plan/${file_id}/delete/`);
+}
+/**
+ * 创建计划
+ */
+export async function aiPlanCreate(id: ModelId,data: AiModelPlan) {
+  return fetchPostCreate(`${baseApi}${id}/plan/`, data);
 }

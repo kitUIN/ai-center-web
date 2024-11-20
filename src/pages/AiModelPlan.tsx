@@ -35,6 +35,7 @@ import { aiFileDelete, aiPlanList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelPlan } from "../utils/api/models/AiModelPlan";
+import { AiModelPlanAdd } from "../components/AiModelPlanAdd";
 const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
 const columns: TableColumnDefinition<AiModelPlan>[] = [
   createTableColumn<AiModelPlan>({
@@ -148,6 +149,7 @@ export const AiModelPlanPage = () => {
               <DataGridToolBar
                 surface={
                   <>
+                  <AiModelPlanAdd itemId={Number(id)}></AiModelPlanAdd>
                     <Tooltip content="文件列表" relationship="label">
                       <ToolbarButton
                         icon={<FolderOpenIcon />}
