@@ -36,6 +36,7 @@ import { DeleteButton } from "../components/DeleteButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelPlan } from "../utils/api/models/AiModelPlan";
 import { AiModelPlanAdd } from "../components/AiModelPlanAdd";
+import { StartTaskButton } from "../components/StartTaskButton";
 const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
 const columns: TableColumnDefinition<AiModelPlan>[] = [
   createTableColumn<AiModelPlan>({
@@ -219,6 +220,7 @@ export const AiModelPlanPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
+                        <StartTaskButton planId={item.id}></StartTaskButton>
                         <DeleteButton
                           id={item.id}
                           queryKey={["aiPlans"]}
