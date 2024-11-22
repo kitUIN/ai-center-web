@@ -16,7 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { BaseModel, ModelId } from "../utils/api/models/Base";
 import { DetailResponse } from "../utils/api/BaseFetch";
 
-const  PlayIcon = bundleIcon(PlayFilled, PlayRegular);
+const PlayIcon = bundleIcon(PlayFilled, PlayRegular);
 
 interface StartTaskButtonProps {
   planId: ModelId;
@@ -27,23 +27,22 @@ export const StartTaskButton = (props: StartTaskButtonProps) => {
 
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const deleteClick = (event: React.MouseEvent) => {
+  const startClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    
   };
 
   return (
     <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
         <Tooltip content="启动任务" relationship="label">
-        <Button
-          appearance="transparent"
-          icon={<PlayIcon />}
-          aria-label="Play"
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-        />
+          <Button
+            appearance="transparent"
+            icon={<PlayIcon />}
+            aria-label="Play"
+            onClick={() => {
+              setDialogOpen(true);
+            }}
+          />
         </Tooltip>
       </DialogTrigger>
       <DialogSurface aria-describedby={undefined}>
@@ -59,11 +58,7 @@ export const StartTaskButton = (props: StartTaskButtonProps) => {
             >
               取消
             </Button>
-            <Button
-              appearance="primary"
-              onClick={deleteClick}
-               
-            >
+            <Button appearance="primary" onClick={startClick}>
               确认执行
             </Button>
           </DialogActions>

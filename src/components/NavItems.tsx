@@ -13,6 +13,7 @@ import AiModelPage from "../pages/AiModel";
 import { motion } from "framer-motion";
 import AiModelFilePage from "../pages/AiModelFile";
 import { AiModelPlanPage } from "../pages/AiModelPlan";
+import TrainTaskPage from "../pages/TrainTask";
 
 interface PageWithAnimationProps {
   component: JSX.Element;
@@ -57,7 +58,7 @@ export const navItems: NavRouterItem[] = [
     path: "/train/task",
     show: true,
     icon: <EmployeeSpotlight />,
-    element: <About />,
+    element: <TrainTaskPage />,
   },
   {
     key: "model",
