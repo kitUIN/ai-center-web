@@ -21,9 +21,17 @@ const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 interface DeleteButtonProps {
   queryKey: string[];
   id: ModelId;
-  DeleteReq: (id: ModelId) => Promise<DetailResponse<BaseModel>>;
+  icon?: JSX.Element;
+  tooltip?:string;
+  deleteReq: (id: ModelId) => Promise<DetailResponse<BaseModel>>;
 }
-export const DeleteButton = (props: DeleteButtonProps) => {
+export const DeleteButton:React.FC<DeleteButtonProps> = ({
+  queryKey,
+  id,
+  icon = <DeleteIcon />,
+  tooltip = "删除",
+  deleteReq
+}) => {
   // const styles = useStyles();
   const { showNotification } = useNotification();
 
@@ -31,11 +39,11 @@ export const DeleteButton = (props: DeleteButtonProps) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const deleteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    props.DeleteReq(props.id).then((resp) => {
+    deleteReq(id).then((resp) => {
       if (resp.code === 200) {
         setDialogOpen(false);
         showNotification(resp.msg, "success");
-        queryClient.refetchQueries({ queryKey: props.queryKey, exact: true });
+        queryClient.refetchQueries({ queryKey: queryKey, exact: true });
       } else {
         showNotification(resp.msg, "error");
       }
@@ -45,10 +53,10 @@ export const DeleteButton = (props: DeleteButtonProps) => {
   return (
     <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
-        <Tooltip content="删除" relationship="label">
+        <Tooltip content={tooltip} relationship="label">
         <Button
           appearance="transparent"
-          icon={<DeleteIcon />}
+          icon={ icon}
           aria-label="Delete"
           onClick={() => {
             setDialogOpen(true);
@@ -58,8 +66,8 @@ export const DeleteButton = (props: DeleteButtonProps) => {
       </DialogTrigger>
       <DialogSurface aria-describedby={undefined}>
         <DialogBody>
-          <DialogTitle>删除确认</DialogTitle>
-          <DialogContent>确认要删除吗? 删除后无法恢复</DialogContent>
+          <DialogTitle>{tooltip}确认</DialogTitle>
+          <DialogContent>确认要{tooltip}吗? {tooltip}后无法恢复</DialogContent>
           <DialogActions>
             <Button
               appearance="secondary"
@@ -67,14 +75,14 @@ export const DeleteButton = (props: DeleteButtonProps) => {
                 setDialogOpen(false);
               }}
             >
-              取消
+              返回
             </Button>
             <Button
               appearance="primary"
               onClick={deleteClick}
               style={{ backgroundColor: "#D13438", color: "white" }}
             >
-              确认删除
+              确认{tooltip}
             </Button>
           </DialogActions>
         </DialogBody>

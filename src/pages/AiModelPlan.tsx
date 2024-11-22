@@ -224,7 +224,7 @@ export const AiModelPlanPage = () => {
                         <DeleteButton
                           id={item.id}
                           queryKey={["aiPlans"]}
-                          DeleteReq={(file_id) => aiFileDelete(id, file_id)}
+                          deleteReq={(file_id) => aiFileDelete(id, file_id)}
                         />
                       </TableCellLayout>
                     </TableCell>

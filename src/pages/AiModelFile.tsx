@@ -287,7 +287,7 @@ export const AiModelFilePage = () => {
                         <DeleteButton
                           id={item.id}
                           queryKey={["aifiles"]}
-                          DeleteReq={(file_id) => aiFileDelete(id, file_id)}
+                          deleteReq={(file_id) => aiFileDelete(id, file_id)}
                         />
                       </TableCellLayout>
                     </TableCell>
