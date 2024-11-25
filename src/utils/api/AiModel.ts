@@ -71,7 +71,7 @@ export async function aiFileList(
 export async function aiFileSimpleList(
   id: ModelId
 ) {
-  return fetchGetSimple<AiModelFile[]>(`${baseApi}${id}/file/simple`);
+  return fetchGetSimple<AiModelFile[]>(`${baseApi}${id}/file/`);
 }
 /**
  * 删除单个文件

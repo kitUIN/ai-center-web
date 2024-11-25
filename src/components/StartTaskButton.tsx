@@ -21,7 +21,7 @@ const PlayIcon = bundleIcon(PlayFilled, PlayRegular);
 interface StartTaskButtonProps {
   planId: ModelId;
 }
-export const StartTaskButton = (props: StartTaskButtonProps) => {
+export const StartTaskButton: React.FC<StartTaskButtonProps> = ({ planId }) => {
   // const styles = useStyles();
   const { showNotification } = useNotification();
 

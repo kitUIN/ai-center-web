@@ -112,7 +112,7 @@ export async function fetchGetList<T>(
 export async function fetchGetSimple<T>(
   api: string,
 ): Promise<DetailResponse<T>> {
-  return await fetchGet(`/api${api}`);
+  return await fetchGet(`/api${api}simple`);
 }
 export async function fetchGetDetail<T>(
   baseApi: string,

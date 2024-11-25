@@ -225,7 +225,7 @@ export const AiModelPage = () => {
                         <DeleteButton
                           id={item.id}
                           queryKey={["aimodels"]}
-                          DeleteReq={aiDelete}
+                          deleteReq={aiDelete}
                         />
                       </TableCellLayout>
                     </TableCell>

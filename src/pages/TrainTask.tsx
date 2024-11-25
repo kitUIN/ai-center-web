@@ -1,9 +1,9 @@
 import {
   bundleIcon,
-  FolderOpenFilled,
-  FolderOpenRegular,
-  ClipboardTaskListLtrFilled,
-  ClipboardTaskListLtrRegular,
+  PlayFilled,
+  PlayRegular,
+  BoxCheckmarkFilled,
+  BoxCheckmarkRegular,
   DismissCircleFilled,
   DismissCircleRegular,
 } from "@fluentui/react-icons";
@@ -35,21 +35,15 @@ import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiDelete, aiList } from "../utils/api/AiModel";
-import { AiModelAdd } from "../components/AiModelAdd";
-import { AiModel } from "../utils/api/models/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useNavigate } from "react-router-dom";
-import { trainTaskList } from "../utils/api/TrainTask";
+import { trainTaskDelete, trainTaskList } from "../utils/api/TrainTask";
 import { TrainTask } from "../utils/api/models/TrainTask";
 import RingStatus from "../components/RingStatus";
+import { TrainTaskAdd } from "../components/TrainTaskAdd";
 
-const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
 const DismissCircleIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
-const ClipboardTaskListLtrIcon = bundleIcon(
-  ClipboardTaskListLtrFilled,
-  ClipboardTaskListLtrRegular
-);
+const BoxCheckmarkIcon = bundleIcon(BoxCheckmarkFilled, BoxCheckmarkRegular);
 const columns: TableColumnDefinition<TrainTask>[] = [
   createTableColumn<TrainTask>({
     columnId: "name",
@@ -158,7 +152,7 @@ export const TrainTaskPage = () => {
                 <b>{listName}</b>
               </Body1>
               <DataGridToolBar
-                surface={<AiModelAdd />}
+                surface={<TrainTaskAdd />}
                 refreshClick={() =>
                   queryClient.refetchQueries({
                     queryKey: ["trainTasks"],
@@ -223,12 +217,23 @@ export const TrainTaskPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
+                        {item.status === 3 ? (
+                          <Tooltip content={"训练结果"} relationship={"label"}>
+                            <Button
+                              appearance="transparent"
+                              icon={<BoxCheckmarkIcon />}
+                              aria-label="BoxCheckmark"
+                            />
+                          </Tooltip>
+                        ) : (
+                          <></>
+                        )}
                         <DeleteButton
                           id={item.id}
                           tooltip="取消任务"
                           icon={<DismissCircleIcon />}
                           queryKey={["trainTasks"]}
-                          deleteReq={aiDelete}
+                          deleteReq={trainTaskDelete}
                         />
                       </TableCellLayout>
                     </TableCell>

@@ -1,4 +1,5 @@
-import { fetchGetDetail, fetchGetList, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
+import { fetchGetDetail, fetchGetList, fetchGetSimple, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
+import { AiModelPlan } from "./models/AiModelPlan";
 import { ModelId } from "./models/Base";
 import { TrainTask } from "./models/TrainTask";
 
@@ -11,6 +12,12 @@ export async function trainTaskList(page: number = 1, limit: number = 20) {
     page: page,
     limit: limit,
   });
+}
+/**
+ * 查询列表
+ */
+export async function trainTaskSimple() {
+  return fetchGetSimple<AiModelPlan[]>('/train/plan/');
 }
 /**
  * 创建

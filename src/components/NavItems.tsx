@@ -58,7 +58,7 @@ export const navItems: NavRouterItem[] = [
     path: "/train/task",
     show: true,
     icon: <EmployeeSpotlight />,
-    element: <TrainTaskPage />,
+    element: <PageWithAnimation component={<TrainTaskPage />}/>,
   },
   {
     key: "model",
