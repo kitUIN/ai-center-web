@@ -87,7 +87,7 @@ const PageController: React.FC<PagesProps> = ({
           </Tooltip>
         )}
         {badges.map((num) => (
-          <Tooltip content={`第${num}页`} relationship={"label"}>
+          <Tooltip key={num} content={`第${num}页`} relationship={"label"}>
             <CounterBadge
               className={
                 currentPage === num
