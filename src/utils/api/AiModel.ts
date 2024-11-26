@@ -1,5 +1,6 @@
 import {
   DetailResponse,
+  fetchGet,
   fetchGetDetail,
   fetchGetList,
   fetchGetSimple,
@@ -12,6 +13,7 @@ import { ModelId } from "./models/Base";
 import { AiModel } from "./models/AiModel";
 import { AiModelFile } from "./models/AiModelFile";
 import { AiModelPlan } from "./models/AiModelPlan";
+import { PluginModel } from "./models/PluginModel";
 
 const baseApi = "/ai/";
 /**
@@ -105,4 +107,8 @@ export async function aiPlanDelete(id: ModelId, file_id: ModelId) {
  */
 export async function aiPlanCreate(id: ModelId,data: AiModelPlan) {
   return fetchPostCreate(`${baseApi}${id}/plan/`, data);
+}
+
+export async function aiPluginList() {
+  return await fetchGet<DetailResponse<PluginModel[]>>(`/api${baseApi}key`);
 }

@@ -1,7 +1,9 @@
 import {
   bundleIcon,
   FolderOpenFilled,
-  FolderOpenRegular,ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular
+  FolderOpenRegular,
+  ClipboardTaskListLtrFilled,
+  ClipboardTaskListLtrRegular,
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -26,24 +28,43 @@ import {
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
   Tooltip,
+  InfoLabel,
+  InteractionTag,
+  InteractionTagPrimary,
+  Tag,
 } from "@fluentui/react-components";
 import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiDelete, aiList } from "../utils/api/AiModel";
+import { aiDelete, aiList, aiPluginList } from "../utils/api/AiModel";
 import { AiModelAdd } from "../components/AiModelAdd";
 import { AiModel } from "../utils/api/models/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useNavigate } from "react-router-dom";
 
 const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
-const ClipboardTaskListLtrIcon = bundleIcon(ClipboardTaskListLtrFilled, ClipboardTaskListLtrRegular);
+const ClipboardTaskListLtrIcon = bundleIcon(
+  ClipboardTaskListLtrFilled,
+  ClipboardTaskListLtrRegular
+);
 const columns: TableColumnDefinition<AiModel>[] = [
   createTableColumn<AiModel>({
     columnId: "name",
     compare: (a, b) => {
       return a.name.localeCompare(b.name);
+    },
+  }),
+  createTableColumn<AiModel>({
+    columnId: "key",
+    compare: (a, b) => {
+      return a.key.localeCompare(b.key);
+    },
+  }),
+  createTableColumn<AiModel>({
+    columnId: "tags",
+    compare: () => {
+      return 1;
     },
   }),
   createTableColumn<AiModel>({
@@ -73,7 +94,7 @@ const useStyles = makeStyles({
   },
   header: {
     overflowY: "auto",
-    maxHeight:"100%"
+    maxHeight: "100%",
   },
 });
 
@@ -84,6 +105,11 @@ export const AiModelPage = () => {
   const aiQuery = useQuery({
     queryKey: ["aimodels"],
     queryFn: () => aiList(current),
+    staleTime: 0,
+  });
+  const pluginList = useQuery({
+    queryKey: ["trainPluginList"],
+    queryFn: aiPluginList,
     staleTime: 0,
   });
   const items = aiQuery.data?.data?.data ?? [];
@@ -109,18 +135,18 @@ export const AiModelPage = () => {
       }),
       useTableColumnSizing_unstable({ columnSizingOptions }),
     ]
-  ); 
+  );
   const [flag, setFlag] = React.useState(true);
   useEffect(() => {
-    if(flag){
+    if (flag) {
       setFlag(false);
-      return
+      return;
     }
     queryClient.refetchQueries({
       queryKey: ["aimodels"],
       exact: true,
-    })
-    console.log(current)
+    });
+    console.log(current);
   }, [current]);
   const headerSortProps = (columnId: TableColumnId) => ({
     onClick: (e: React.MouseEvent) => {
@@ -139,7 +165,7 @@ export const AiModelPage = () => {
   const navigate = useNavigate();
   return (
     <Card className={styles.card}>
-      <div  style={{height:"90%"}}>
+      <div style={{ height: "90%" }}>
         <CardHeader
           header={
             <div className={styles.cardHeader}>
@@ -147,7 +173,7 @@ export const AiModelPage = () => {
                 <b>{listName}</b>
               </Body1>
               <DataGridToolBar
-                surface={<AiModelAdd />}
+                surface={<AiModelAdd pluginList={pluginList} />}
                 refreshClick={() =>
                   queryClient.refetchQueries({
                     queryKey: ["aimodels"],
@@ -170,6 +196,12 @@ export const AiModelPage = () => {
               <TableRow>
                 <TableHeaderCell {...headerSortProps("name")}>
                   名称
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("key")}>
+                  所属插件
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("tags")}>
+                  标签
                 </TableHeaderCell>
                 <TableHeaderCell {...headerSortProps("update_datetime")}>
                   上次更新
@@ -194,6 +226,28 @@ export const AiModelPage = () => {
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
                     <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout>
+                        <InfoLabel
+                          info={
+                            pluginList?.data?.data?.find(
+                              (option) => option.key === item.key
+                            )?.info
+                          }
+                        >
+                          {item.key}
+                        </InfoLabel>
+                      </TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <TableCellLayout>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          {item.tags.map((tag) => (
+                            <Tag size="small">{tag}</Tag>
+                          ))}
+                        </div>
+                      </TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
                       {item.update_datetime}
                     </TableCell>
                     <TableCell
@@ -208,7 +262,9 @@ export const AiModelPage = () => {
                             icon={<FolderOpenIcon />}
                             aria-label="FolderOpen"
                             onClick={() =>
-                              navigate(`/model/ai/${item.id}/file`,{ state: item })
+                              navigate(`/model/ai/${item.id}/file`, {
+                                state: item,
+                              })
                             }
                           />
                         </Tooltip>
@@ -218,7 +274,9 @@ export const AiModelPage = () => {
                             icon={<ClipboardTaskListLtrIcon />}
                             aria-label="TrainPlan"
                             onClick={() =>
-                              navigate(`/model/ai/${item.id}/plan`,{ state: item })
+                              navigate(`/model/ai/${item.id}/plan`, {
+                                state: item,
+                              })
                             }
                           />
                         </Tooltip>

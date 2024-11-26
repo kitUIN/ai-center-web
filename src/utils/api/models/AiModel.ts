@@ -8,9 +8,16 @@ export interface AiModel extends BaseModel {
    * 名称
    */
   name: string;
+  /**
+   * key
+   */
+  key: string;
+  tags: string[];
 }
 export const defaultAiModel: AiModel = {
   name: "",
+  key: "",
+  tags: [],
   create_datetime: null,
   update_datetime: null,
   id: null,

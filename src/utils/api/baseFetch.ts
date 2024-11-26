@@ -109,11 +109,13 @@ export async function fetchGetList<T>(
 ): Promise<ListResponse<T>> {
   return await fetchGet("/api" + api, data as Record<string, unknown>);
 }
+
 export async function fetchGetSimple<T>(
   api: string,
 ): Promise<DetailResponse<T>> {
   return await fetchGet(`/api${api}simple`);
 }
+
 export async function fetchGetDetail<T>(
   baseApi: string,
   id: ModelId
@@ -142,7 +144,7 @@ export async function fetchPostUpdate<T>(
   id: ModelId,
   data: T
 ) {
-  return fetchPost(
+  return fetchPost<DetailResponse<T>>(
     `/api${baseApi}${id}/update/`,
     data as Record<string, unknown>
   );
