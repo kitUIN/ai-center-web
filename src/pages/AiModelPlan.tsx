@@ -31,7 +31,7 @@ import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiFileDelete, aiPlanList } from "../utils/api/AiModel";
+import { aiFileDelete, aiPlanList, aiPlanTemplateList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelPlan } from "../utils/api/models/AiModelPlan";

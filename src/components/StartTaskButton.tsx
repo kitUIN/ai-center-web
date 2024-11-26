@@ -13,8 +13,7 @@ import {
 import { bundleIcon, PlayFilled, PlayRegular } from "@fluentui/react-icons";
 import { useNotification } from "../utils/notification/Notification";
 import { useQueryClient } from "@tanstack/react-query";
-import { BaseModel, ModelId } from "../utils/api/models/Base";
-import { DetailResponse } from "../utils/api/BaseFetch";
+import { ModelId } from "../utils/api/models/Base";
 
 const PlayIcon = bundleIcon(PlayFilled, PlayRegular);
 

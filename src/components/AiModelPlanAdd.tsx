@@ -29,8 +29,12 @@ import {
 import { ChangeEvent } from "react";
 import { useNotification } from "../utils/notification/Notification";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AiModelPlan } from "../utils/api/models/AiModelPlan";
-import { aiFileSimpleList, aiPlanCreate } from "../utils/api/AiModel";
+import {
+  aiFileSimpleList,
+  aiPlanCreate,
+  aiPlanTemplateList,
+} from "../utils/api/AiModel";
+import { ArgData, StartupData } from "../utils/api/models/PlanTemplate";
 const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
@@ -66,18 +70,46 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     queryFn: () => aiFileSimpleList(itemId),
     staleTime: 0,
   });
+
+  const aiPlanTemplateQuery = useQuery({
+    queryKey: ["aiPlanTemplate"],
+    queryFn: () => aiPlanTemplateList(itemId),
+    staleTime: 0,
+  });
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [args, setArgs] = React.useState<ArgObj[]>([]);
-  const defaultAiModelPlan: AiModelPlan = {
+  const [useTemplate, setuseTemplate] = React.useState(false);
+  const [args, setArgs] = React.useState<ArgData[]>([]);
+  const defaultAiModelPlan: {
+    name: string;
+    startup: StartupData;
+  } = {
     name: "",
-    create_datetime: null,
-    update_datetime: null,
-    id: null,
-    ai_model: null,
-    startup: "",
-    args: "{}",
+    startup: {
+      value: "",
+      allow_modify: true,
+    },
   };
   const [formData, setFormData] = React.useState(defaultAiModelPlan);
+  const changeTemplate = () => {
+    if (useTemplate) {
+      setFormData({
+        ...formData,
+        ["startup"]: {
+          value: "",
+          allow_modify: true,
+        },
+      });
+      setArgs([]);
+    } else if (aiPlanTemplateQuery.data?.data) {
+      const { args, startup } = aiPlanTemplateQuery.data.data;
+      setFormData({
+        ...formData,
+        ["startup"]: startup,
+      });
+      setArgs(args);
+    }
+    setuseTemplate(!useTemplate);
+  };
   const handleSubmit = (ev: React.FormEvent) => {
     const data = { ...formData };
     data.args = JSON.stringify(args);
@@ -103,16 +135,34 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
   };
   const handleAddArg = () => {
     const c = args.length > 0 ? args[args.length - 1].id + 1 : 1;
-    setArgs([...args, { id: c, name: `arg_${c}`, value: "", type: "string" }]);
+    setArgs([
+      ...args,
+      {
+        id: c,
+        name: `arg_${c}`,
+        value: "",
+        type: "string",
+        allow_modify: true,
+      },
+    ]);
   };
   const handleChange = (
     ev: ChangeEvent<HTMLInputElement>,
     data: InputOnChangeData
   ) => {
     const { name } = ev.target;
+    let vData: string | StartupData = "";
+    if (name === "startup") {
+      vData = {
+        ...formData.startup,
+        ["value"]: data.value,
+      };
+    } else {
+      vData = data.value;
+    }
     setFormData({
       ...formData,
-      [name]: data.value || "",
+      [name]: vData,
     });
   };
   const handleArgValueChange = (
@@ -177,28 +227,49 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                 启动命令
               </InfoLabel>
               <Input
+                disabled={!formData.startup.allow_modify}
                 required
                 name="startup"
-                value={formData.startup}
+                value={formData.startup.value}
                 onChange={handleChange}
                 id={"startup"}
               />
               <Label htmlFor={"args"}>启动参数</Label>
               {args.map((item) => (
                 <div key={item.id} className={styles.args}>
-                  <Input
-                    required
-                    style={{ minWidth: "80px", maxWidth: "80px" }}
-                    value={item.name}
-                    name={`${item.id}`}
-                    onChange={handleArgNameChange}
-                  />
+                  <div style={{ position: "relative", minWidth: "80px" }}>
+                    <Input
+                      disabled={!item.allow_modify}
+                      required
+                      style={{ minWidth: "80px", maxWidth: "80px" }}
+                      value={item.name}
+                      name={`${item.id}`}
+                      onChange={handleArgNameChange}
+                    />
+                    {item.info && (
+                      <InfoLabel
+                        info={item.info}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                          zIndex: 5,
+                        }}
+                      />
+                    )}
+                  </div>
+
                   <Select
+                    disabled={!item.allow_modify}
                     onChange={(_event, data) => {
                       setArgs((prevArgs) =>
                         prevArgs.map((arg) =>
                           arg.id === item.id
-                            ? { ...arg, ["type"]: data.value ?? "string" }
+                            ? {
+                                ...arg,
+                                ["type"]:
+                                  data.value === "file" ? "file" : "string",
+                              }
                             : arg
                         )
                       );
@@ -248,6 +319,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                   )}
 
                   <Button
+                    disabled={!item.allow_modify}
                     icon={<DeleteDismissIcon />}
                     onClick={() => handleDeleteArg(item.id)}
                   ></Button>
@@ -257,6 +329,9 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
             </DialogContent>
 
             <DialogActions>
+              <Button onClick={changeTemplate}>
+                {useTemplate ? "使用自定义" : "使用模板"}
+              </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button
                   appearance="secondary"

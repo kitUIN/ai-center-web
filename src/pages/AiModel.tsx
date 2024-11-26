@@ -29,8 +29,6 @@ import {
   useTableColumnSizing_unstable,
   Tooltip,
   InfoLabel,
-  InteractionTag,
-  InteractionTagPrimary,
   Tag,
 } from "@fluentui/react-components";
 import React, { useEffect } from "react";

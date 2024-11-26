@@ -14,6 +14,7 @@ import { AiModel } from "./models/AiModel";
 import { AiModelFile } from "./models/AiModelFile";
 import { AiModelPlan } from "./models/AiModelPlan";
 import { PluginModel } from "./models/PluginModel";
+import { TrainPlanTemplate } from "./models/PlanTemplate";
 
 const baseApi = "/ai/";
 /**
@@ -70,9 +71,7 @@ export async function aiFileList(
 /**
  * 查询文件列表
  */
-export async function aiFileSimpleList(
-  id: ModelId
-) {
+export async function aiFileSimpleList(id: ModelId) {
   return fetchGetSimple<AiModelFile[]>(`${baseApi}${id}/file/`);
 }
 /**
@@ -80,7 +79,9 @@ export async function aiFileSimpleList(
  * @param id id
  */
 export async function aiFileDelete(id: ModelId, file_id: ModelId) {
-  return fetchPost<DetailResponse<AiModelFile>>(`/api${baseApi}${id}/file/${file_id}/delete/`);
+  return fetchPost<DetailResponse<AiModelFile>>(
+    `/api${baseApi}${id}/file/${file_id}/delete/`
+  );
 }
 /**
  * 查询计划列表
@@ -100,15 +101,23 @@ export async function aiPlanList(
  * @param id id
  */
 export async function aiPlanDelete(id: ModelId, file_id: ModelId) {
-  return fetchPost<DetailResponse<AiModelPlan>>(`/api${baseApi}${id}/plan/${file_id}/delete/`);
+  return fetchPost<DetailResponse<AiModelPlan>>(
+    `/api${baseApi}${id}/plan/${file_id}/delete/`
+  );
 }
 /**
  * 创建计划
  */
-export async function aiPlanCreate(id: ModelId,data: AiModelPlan) {
+export async function aiPlanCreate(id: ModelId, data: AiModelPlan) {
   return fetchPostCreate(`${baseApi}${id}/plan/`, data);
 }
 
 export async function aiPluginList() {
   return await fetchGet<DetailResponse<PluginModel[]>>(`/api${baseApi}key`);
+}
+
+export async function aiPlanTemplateList(id: ModelId) {
+  return await fetchGet<DetailResponse<TrainPlanTemplate>>(
+    `/api${baseApi}${id}/cmd/`
+  );
 }
