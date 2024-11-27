@@ -20,8 +20,7 @@ import {
 import { bundleIcon, PlayFilled, PlayRegular } from "@fluentui/react-icons";
 import { useNotification } from "../utils/notification/Notification";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ModelId } from "../utils/api/models/Base";
-import { trainTaskSimple } from "../utils/api/TrainTask";
+import { trainTaskSimple, trainTaskStart } from "../utils/api/TrainTask";
 import { useNavigate } from "react-router-dom";
 
 const PlayIcon = bundleIcon(PlayFilled, PlayRegular);
@@ -44,7 +43,7 @@ export const TrainTaskAdd: React.FC = () => {
   const { showNotification } = useNotification();
 
   const comboId = React.useId();
-  //   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const aiQuery = useQuery({
     queryKey: ["trainTaskSimple"],
     queryFn: trainTaskSimple,
@@ -71,8 +70,20 @@ export const TrainTaskAdd: React.FC = () => {
     const selectedOption = options.find((option) => option.value === query);
     if (selectedOption) {
       const planId = selectedOption.children.props.id;
-      setQuery("");
-      setDialogOpen(false);
+      trainTaskStart(planId)
+      .then((resp) => {
+        if (resp.code === 200) {
+          showNotification(resp.msg, "success");
+          setQuery("");
+          setDialogOpen(false);
+          queryClient.refetchQueries({ queryKey: ["trainTasks"], exact: true });
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
     } else {
       showNotification("请先选择计划", "warning");
     }

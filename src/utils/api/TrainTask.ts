@@ -1,4 +1,4 @@
-import { fetchGetDetail, fetchGetList, fetchGetSimple, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
+import { DetailResponse, fetchGetDetail, fetchGetList, fetchGetSimple, fetchPost, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
 import { AiModelPlan } from "./models/AiModelPlan";
 import { ModelId } from "./models/Base";
 import { TrainTask } from "./models/TrainTask";
@@ -22,8 +22,8 @@ export async function trainTaskSimple() {
 /**
  * 创建
  */
-export async function trainTaskCreate(data: TrainTask) {
-  return fetchPostCreate(baseApi, data);
+export async function trainTaskStart(planId:ModelId) {
+  return await fetchPost<DetailResponse<unknown>>(`/api/train/plan/${planId}/start/`, {} as Record<string, unknown>);
 }
 /**
  * 查询单个详情
