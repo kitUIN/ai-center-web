@@ -51,12 +51,7 @@ const useStyles = makeStyles({
     gap: "4px",
   },
 });
-interface ArgObj {
-  id: number;
-  name: string;
-  value: string;
-  type: string;
-}
+
 interface AiModelPlanAddProps {
   itemId: number;
 }
@@ -111,9 +106,16 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     setuseTemplate(!useTemplate);
   };
   const handleSubmit = (ev: React.FormEvent) => {
-    const data = { ...formData };
-    data.args = JSON.stringify(args);
-    aiPlanCreate(itemId, data)
+    const { name, startup } = formData;
+    aiPlanCreate(itemId, {
+      name: name,
+      startup: startup.value,
+      ai_model: itemId,
+      id: null,
+      create_datetime: null,
+      update_datetime: null,
+      args: JSON.stringify(args),
+    })
       .then((resp) => {
         if (resp.code === 200) {
           showNotification(resp.msg, "success");
@@ -310,7 +312,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                       style={{ width: "100%" }}
                     >
                       {aiFileQuery.data?.data?.map((fileItem) => (
-                        <Option
+                        <Option key={fileItem.id}
                           value={`#${fileItem.id}`}
                           checkIcon={<CheckmarkCircleRegular />}
                         >{`${fileItem.file_name} #${fileItem.id}`}</Option>
