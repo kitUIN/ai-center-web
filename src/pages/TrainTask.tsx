@@ -4,6 +4,8 @@ import {
   BoxCheckmarkRegular,
   DismissCircleFilled,
   DismissCircleRegular,
+  DocumentBulletListMultipleFilled,
+  DocumentBulletListMultipleRegular,
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -43,6 +45,10 @@ import { TrainTaskAdd } from "../components/TrainTaskAdd";
 
 const DismissCircleIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
 const BoxCheckmarkIcon = bundleIcon(BoxCheckmarkFilled, BoxCheckmarkRegular);
+const DocumentBulletListMultipleIcon = bundleIcon(
+  DocumentBulletListMultipleFilled,
+  DocumentBulletListMultipleRegular
+);
 const columns: TableColumnDefinition<TrainTask>[] = [
   createTableColumn<TrainTask>({
     columnId: "name",
@@ -57,12 +63,17 @@ const columns: TableColumnDefinition<TrainTask>[] = [
     },
   }),
   createTableColumn<TrainTask>({
+    columnId: "running_status",
+    compare: (a, b) => {
+      return a.running_status?.localeCompare(b.running_status!) ?? 1;
+    },
+  }),
+  createTableColumn<TrainTask>({
     columnId: "create_datetime",
     compare: (a, b) => {
       return a.create_datetime?.localeCompare(b.create_datetime!) ?? 1;
     },
   }),
-
 ];
 
 const useStyles = makeStyles({
@@ -116,7 +127,10 @@ export const TrainTaskPage = () => {
     },
     [
       useTableSort({
-        defaultSortState: { sortColumn: "create_datetime", sortDirection: "descending" },
+        defaultSortState: {
+          sortColumn: "create_datetime",
+          sortDirection: "descending",
+        },
       }),
       useTableColumnSizing_unstable({ columnSizingOptions }),
     ]
@@ -185,6 +199,9 @@ export const TrainTaskPage = () => {
                 <TableHeaderCell {...headerSortProps("ai_model_name")}>
                   模型
                 </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("running_status")}>
+                  运行状态
+                </TableHeaderCell>
                 <TableHeaderCell {...headerSortProps("create_datetime")}>
                   创建时间
                 </TableHeaderCell>
@@ -218,7 +235,24 @@ export const TrainTaskPage = () => {
                       </div>
                     </TableCell>
                     <TableCell tabIndex={0} role="gridcell">
-                      <Tag>{item.ai_model_name}</Tag>
+                      <TableCellLayout>{item.ai_model_name}</TableCellLayout>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <Tag
+                        shape="circular"
+                        appearance="brand"
+                        style={
+                          item.status === 2
+                            ? { backgroundColor: "#FFF1F0", color: "#CF1322" }
+                            : item.status === 0
+                            ? { backgroundColor: "#FFF7E6", color: "#D46B08" }
+                            : item.status === 3
+                            ? { backgroundColor: "#F6FFED", color: "#389E0D" }
+                            : {}
+                        }
+                      >
+                        {item.running_status}
+                      </Tag>
                     </TableCell>
                     <TableCell tabIndex={0} role="gridcell">
                       {item.create_datetime}
@@ -229,6 +263,13 @@ export const TrainTaskPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
+                        <Tooltip content={"日志"} relationship={"label"}>
+                          <Button
+                            appearance="transparent"
+                            icon={<DocumentBulletListMultipleIcon />}
+                            aria-label="DocumentBulletListMultiple"
+                          />
+                        </Tooltip>
                         {item.status === 3 ? (
                           <Tooltip content={"训练结果"} relationship={"label"}>
                             <Button

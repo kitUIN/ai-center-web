@@ -32,4 +32,8 @@ export interface TrainTask extends BaseModel {
    * 完成时间
    */
   finished_datetime?: string;
+  /**
+   * 运行状态
+   */
+  running_status?: string;
 }
