@@ -14,6 +14,7 @@ import { bundleIcon, PlayFilled, PlayRegular } from "@fluentui/react-icons";
 import { useNotification } from "../utils/notification/Notification";
 import { useQueryClient } from "@tanstack/react-query";
 import { ModelId } from "../utils/api/models/Base";
+import { trainTaskStart } from "../utils/api/TrainTask";
 
 const PlayIcon = bundleIcon(PlayFilled, PlayRegular);
 
@@ -28,6 +29,19 @@ export const StartTaskButton: React.FC<StartTaskButtonProps> = ({ planId }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const startClick = (event: React.MouseEvent) => {
     event.stopPropagation();
+    trainTaskStart(planId)
+      .then((resp) => {
+        if (resp.code === 200) {
+          showNotification(resp.msg, "success");
+          setDialogOpen(false);
+          queryClient.refetchQueries({ queryKey: ["trainTasks"], exact: true });
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
   };
 
   return (

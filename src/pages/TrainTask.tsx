@@ -1,7 +1,5 @@
 import {
   bundleIcon,
-  PlayFilled,
-  PlayRegular,
   BoxCheckmarkFilled,
   BoxCheckmarkRegular,
   DismissCircleFilled,
@@ -30,13 +28,14 @@ import {
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
   Tooltip,
+  Tag,
 } from "@fluentui/react-components";
 import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DeleteButton } from "../components/DeleteButton";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { trainTaskDelete, trainTaskList } from "../utils/api/TrainTask";
 import { TrainTask } from "../utils/api/models/TrainTask";
 import RingStatus from "../components/RingStatus";
@@ -52,11 +51,18 @@ const columns: TableColumnDefinition<TrainTask>[] = [
     },
   }),
   createTableColumn<TrainTask>({
-    columnId: "update_datetime",
+    columnId: "ai_model_name",
     compare: (a, b) => {
-      return a.update_datetime?.localeCompare(b.update_datetime!) ?? 1;
+      return a.ai_model_name?.localeCompare(b.ai_model_name!) ?? 1;
     },
   }),
+  createTableColumn<TrainTask>({
+    columnId: "create_datetime",
+    compare: (a, b) => {
+      return a.create_datetime?.localeCompare(b.create_datetime!) ?? 1;
+    },
+  }),
+
 ];
 
 const useStyles = makeStyles({
@@ -110,7 +116,7 @@ export const TrainTaskPage = () => {
     },
     [
       useTableSort({
-        defaultSortState: { sortColumn: "name", sortDirection: "ascending" },
+        defaultSortState: { sortColumn: "create_datetime", sortDirection: "descending" },
       }),
       useTableColumnSizing_unstable({ columnSizingOptions }),
     ]
@@ -141,7 +147,7 @@ export const TrainTaskPage = () => {
     tabBehavior: "limited-trap-focus",
   });
   const listName = "训练任务列表";
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <Card className={styles.card}>
       <div style={{ height: "90%" }}>
@@ -176,8 +182,11 @@ export const TrainTaskPage = () => {
                 <TableHeaderCell {...headerSortProps("name")}>
                   名称
                 </TableHeaderCell>
-                <TableHeaderCell {...headerSortProps("update_datetime")}>
-                  上次更新
+                <TableHeaderCell {...headerSortProps("ai_model_name")}>
+                  模型
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("create_datetime")}>
+                  创建时间
                 </TableHeaderCell>
                 <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
@@ -209,7 +218,10 @@ export const TrainTaskPage = () => {
                       </div>
                     </TableCell>
                     <TableCell tabIndex={0} role="gridcell">
-                      {item.update_datetime}
+                      <Tag>{item.ai_model_name}</Tag>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      {item.create_datetime}
                     </TableCell>
                     <TableCell
                       role="gridcell"
@@ -228,13 +240,17 @@ export const TrainTaskPage = () => {
                         ) : (
                           <></>
                         )}
-                        <DeleteButton
-                          id={item.id}
-                          tooltip="取消任务"
-                          icon={<DismissCircleIcon />}
-                          queryKey={["trainTasks"]}
-                          deleteReq={trainTaskDelete}
-                        />
+                        {item.status === 2 ? (
+                          <></>
+                        ) : (
+                          <DeleteButton
+                            id={item.id}
+                            tooltip="取消任务"
+                            icon={<DismissCircleIcon />}
+                            queryKey={["trainTasks"]}
+                            deleteReq={trainTaskDelete}
+                          />
+                        )}
                       </TableCellLayout>
                     </TableCell>
                   </TableRow>

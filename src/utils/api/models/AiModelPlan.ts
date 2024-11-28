@@ -13,6 +13,10 @@ export interface AiModelPlan extends BaseModel {
    */
   ai_model: ModelId;
   /**
+   * 依赖文件
+   */
+  requirements: ModelId;
+  /**
    * 启动命令
    */
   startup: string;
@@ -26,6 +30,7 @@ export const defaultAiModelPlan: AiModelPlan = {
   create_datetime: null,
   update_datetime: null,
   id: null,
+  requirements:null,
   ai_model: 0,
   startup: "",
   args: "{}"

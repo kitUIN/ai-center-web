@@ -35,6 +35,7 @@ import {
   aiPlanTemplateList,
 } from "../utils/api/AiModel";
 import { ArgData, StartupData } from "../utils/api/models/PlanTemplate";
+import { ModelId } from "../utils/api/models/Base";
 const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
@@ -77,12 +78,14 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
   const defaultAiModelPlan: {
     name: string;
     startup: StartupData;
+    requirements?: ModelId;
   } = {
     name: "",
     startup: {
       value: "",
       allow_modify: true,
     },
+    requirements: null,
   };
   const [formData, setFormData] = React.useState(defaultAiModelPlan);
   const changeTemplate = () => {
@@ -106,12 +109,13 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     setuseTemplate(!useTemplate);
   };
   const handleSubmit = (ev: React.FormEvent) => {
-    const { name, startup } = formData;
+    const { name, startup, requirements } = formData;
     aiPlanCreate(itemId, {
       name: name,
       startup: startup.value,
       ai_model: itemId,
       id: null,
+      requirements: requirements,
       create_datetime: null,
       update_datetime: null,
       args: JSON.stringify(args),
@@ -214,6 +218,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
               <Label required htmlFor={"name"}>
                 训练计划名称
               </Label>
+
               <Input
                 required
                 name="name"
@@ -221,6 +226,23 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                 onChange={handleChange}
                 id={"name"}
               />
+              <Label htmlFor={"requirements"}>依赖文件requirements.txt</Label>
+              <Combobox
+                value={aiFileQuery.data?.data?.find(i=>i.id == formData.requirements)?.file || ""}
+                onOptionSelect={(_e, data) => {
+                  console.log(data.optionText)
+                  console.log(data.optionValue)
+                }}
+                style={{ width: "100%" }}
+              >
+                {aiFileQuery.data?.data?.map((fileItem) => (
+                  <Option
+                    key={fileItem.id}
+                    value={`${fileItem.id}`}
+                    checkIcon={<CheckmarkCircleRegular />}
+                  >{`${fileItem.file_name} #${fileItem.id}`}</Option>
+                ))}
+              </Combobox>
               <InfoLabel
                 required
                 htmlFor={"startup"}
@@ -312,7 +334,8 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                       style={{ width: "100%" }}
                     >
                       {aiFileQuery.data?.data?.map((fileItem) => (
-                        <Option key={fileItem.id}
+                        <Option
+                          key={fileItem.id}
                           value={`#${fileItem.id}`}
                           checkIcon={<CheckmarkCircleRegular />}
                         >{`${fileItem.file_name} #${fileItem.id}`}</Option>
