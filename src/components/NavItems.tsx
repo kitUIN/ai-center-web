@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import AiModelFilePage from "../pages/AiModelFile";
 import { AiModelPlanPage } from "../pages/AiModelPlan";
 import TrainTaskPage from "../pages/TrainTask";
+import TrainTaskLogPage from "../pages/TrainTaskLog";
 
 interface PageWithAnimationProps {
   component: JSX.Element;
@@ -95,5 +96,14 @@ export const navItems: NavRouterItem[] = [
     show: false,
     icon: <BotSparkle />,
     element: <PageWithAnimation component={<AiModelPlanPage />}/>,
+  },
+  {
+    key: "train_task_log",
+    name: "训练任务日志",
+    header: null,
+    path: "/train/task/:id/log",
+    show: false,
+    icon: <BotSparkle />,
+    element: <PageWithAnimation component={<TrainTaskLogPage />}/>,
   },
 ];

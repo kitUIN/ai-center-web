@@ -42,6 +42,7 @@ import { trainTaskDelete, trainTaskList } from "../utils/api/TrainTask";
 import { TrainTask } from "../utils/api/models/TrainTask";
 import RingStatus from "../components/RingStatus";
 import { TrainTaskAdd } from "../components/TrainTaskAdd";
+import { useNavigate } from "react-router-dom";
 
 const DismissCircleIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
 const BoxCheckmarkIcon = bundleIcon(BoxCheckmarkFilled, BoxCheckmarkRegular);
@@ -161,7 +162,7 @@ export const TrainTaskPage = () => {
     tabBehavior: "limited-trap-focus",
   });
   const listName = "训练任务列表";
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <Card className={styles.card}>
       <div style={{ height: "90%" }}>
@@ -268,6 +269,11 @@ export const TrainTaskPage = () => {
                             appearance="transparent"
                             icon={<DocumentBulletListMultipleIcon />}
                             aria-label="DocumentBulletListMultiple"
+                            onClick={() => {
+                              navigate(`/train/task/${item.id}/log`, {
+                                state: item,
+                              });
+                            }}
                           />
                         </Tooltip>
                         {item.status === 3 ? (

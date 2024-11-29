@@ -1,7 +1,8 @@
-import { DetailResponse, fetchGetDetail, fetchGetList, fetchGetSimple, fetchPost, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
+import { DetailResponse, fetchGet, fetchGetDetail, fetchGetList, fetchGetSimple, fetchPost, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
 import { AiModelPlan } from "./models/AiModelPlan";
 import { ModelId } from "./models/Base";
 import { TrainTask } from "./models/TrainTask";
+import { TrainTaskLog } from "./models/TrainTaskLog";
 
 const baseApi = "/train/task/";
 /**
@@ -47,4 +48,8 @@ export async function trainTaskUpdate(id: ModelId, data: TrainTask) {
  */
 export async function trainTaskDelete(id: ModelId) {
   return fetchPostDelete<TrainTask>(baseApi, id);
+}
+
+export async function trainTaskLog(id: ModelId) {
+  return await fetchGet<DetailResponse<TrainTaskLog>>(`/api${baseApi}${id}/log/`);
 }
