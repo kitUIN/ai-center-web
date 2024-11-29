@@ -243,7 +243,7 @@ export const TrainTaskPage = () => {
                         shape="circular"
                         appearance="brand"
                         style={
-                          item.status === 2
+                          (item.status === 2 || item.status === 4)
                             ? { backgroundColor: "#FFF1F0", color: "#CF1322" }
                             : item.status === 0
                             ? { backgroundColor: "#FFF7E6", color: "#D46B08" }

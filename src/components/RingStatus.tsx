@@ -8,18 +8,19 @@ interface RingStutasProps {
   status: number;
 }
 const RingStatus: React.FC<RingStutasProps> = ({ status }) => {
-  const tooltipValue = ["等待中", "进行中", "失败/取消", "已完成"];
+  const tooltipValue = ["等待中", "进行中", "已取消", "已完成", "失败"];
   const tooltipBadge: PresenceBadgeStatus[] = [
     "away",
     "away",
     "do-not-disturb",
     "available",
+    "do-not-disturb",
   ];
   if (status === 1) {
     // 进行中
     return (
       <Tooltip content={tooltipValue[status]} relationship="label">
-        <span style={{ height: "16px", width: "16px"}}>
+        <span style={{ height: "16px", width: "16px" }}>
           <svg
             aria-label="currently running: "
             width="16px"

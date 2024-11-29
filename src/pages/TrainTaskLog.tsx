@@ -2,24 +2,18 @@ import {
   makeStyles,
   Card,
   CardHeader,
-  Body1,
-  AccordionPanel,
-  AccordionItem,
   Accordion,
-  AccordionHeader,
   AccordionToggleEventHandler,
-  tokens,
   Divider,
   Text,
   Subtitle2,
   Tag,
 } from "@fluentui/react-components";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 // import { useNavigate } from "react-router-dom";
 import { trainTaskDetail, trainTaskLog } from "../utils/api/TrainTask";
 import { useParams } from "react-router-dom";
-import RingStatus from "../components/RingStatus";
 import { TrainTaskLogAccordion } from "../components/TrainTaskLogAccordion";
 import { secondsToString, toNow } from "../utils/DateUtils";
 
@@ -48,6 +42,8 @@ const useStyles = makeStyles({
     margin: "10px 0px",
   },
 });
+
+
 const TotalTimeElapsed = ({
   createDatetime,
 }: {
@@ -60,7 +56,6 @@ const TotalTimeElapsed = ({
       setElapsedTime(toNow(createDatetime)); // 每秒更新状态
     }, 1000);
 
-    // 清理定时器，防止内存泄漏
     return () => clearInterval(intervalId);
   }, [createDatetime]);
 
@@ -69,7 +64,7 @@ const TotalTimeElapsed = ({
 export const TrainTaskLogPage = () => {
   const { id } = useParams();
   const styles = useStyles();
-  // const queryClient = useQueryClient();
+  
   const [openItems, setOpenItems] = React.useState(["1"]);
   const handleToggle: AccordionToggleEventHandler<string> = (event, data) => {
     setOpenItems(data.openItems);
@@ -84,7 +79,14 @@ export const TrainTaskLogPage = () => {
     queryFn: () => trainTaskLog(id),
     staleTime: 0,
   });
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      queryClient.refetchQueries({ queryKey: [`trainDetailLog_${id}`], exact: true });
+    }, 1000);
 
+    return () => clearInterval(intervalId);
+  }, []);
   // const navigate = useNavigate();
   return (
     <Card className={styles.card}>
@@ -95,15 +97,23 @@ export const TrainTaskLogPage = () => {
               <Subtitle2>
                 <b>{aiQuery.data?.data?.name}</b>
                 <div>
-                  {aiQuery.data?.data?.finished_datetime ? (
+                  {aiQuery.data?.data?.status === 3 ? (
                     <Text size={200}>
-                      `完成于$
+                      完成于
                       {toNow(aiQuery.data?.data?.finished_datetime, true)}
-                      前,执行耗时$
+                      前,执行耗时
                       {secondsToString(
                         aiLogQuery.data?.data?.total_seconds ?? 0
                       )}
-                      `
+                    </Text>
+                  ) : aiQuery.data?.data?.status === 2 ? (
+                    <Text size={200}>
+                      取消于
+                      {toNow(aiQuery.data?.data?.update_datetime, true)}
+                      前,执行耗时
+                      {secondsToString(
+                        aiLogQuery.data?.data?.total_seconds ?? 0
+                      )}
                     </Text>
                   ) : (
                     <TotalTimeElapsed
@@ -118,7 +128,7 @@ export const TrainTaskLogPage = () => {
                 shape="circular"
                 appearance="brand"
                 style={
-                  aiQuery.data?.data?.status === 2
+                  (aiQuery.data?.data?.status === 2 || aiQuery.data?.data?.status === 4)
                     ? { backgroundColor: "#FFF1F0", color: "#CF1322" }
                     : aiQuery.data?.data?.status === 0
                     ? { backgroundColor: "#FFF7E6", color: "#D46B08" }
@@ -157,7 +167,7 @@ export const TrainTaskLogPage = () => {
             <TrainTaskLogAccordion
               status={aiLogQuery.data?.data?.train}
               seconds={aiLogQuery.data?.data?.train_seconds}
-              name="训练"
+              name="模型训练"
               value="3"
               openItems={openItems}
             ></TrainTaskLogAccordion>
