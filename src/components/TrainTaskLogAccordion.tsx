@@ -32,6 +32,25 @@ const useStyles = makeStyles({
       background: tokens.colorNeutralBackground1Hover,
     },
   },
+  contentLine: {
+    fontSize: "12px",
+    // color: "#d1d7e0",
+    display: "flex",
+    lineHeight: "20px",
+    ":hover": {
+      background: tokens.colorNeutralBackground1Hover,
+    },
+  },
+  contentIndex:{
+    color:"#212830",
+    width: "48px",
+    minWidth: "48px",
+    overflow: "hidden",
+    textAlign: "right",
+    textDecoration: "none",
+    whiteSpace: "nowrap",
+    userSelect: "none",
+  },
   accordionHeaderSelected: {
     background: tokens.colorNeutralBackground1Selected,
   },
@@ -43,6 +62,7 @@ interface TrainTaskLogAccordionProps {
   name: string;
   value: string;
   openItems: string[];
+  content?: string[];
 }
 export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   status,
@@ -50,6 +70,7 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   name,
   value,
   openItems,
+  content,
 }) => {
   const styles = useStyles();
 
@@ -71,7 +92,26 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
         </div>
       </AccordionHeader>
       <AccordionPanel className={styles.accordionPanel}>
-        <div>Accordion Panel 1</div>
+        {content?.map((str, index) => {
+          return (
+            <div className={styles.contentLine}>
+              <span className={styles.contentIndex}
+              >
+                {index+1}
+              </span>
+              <span
+                style={{
+                  whiteSpace: "pre-warp",
+                  display: "inline-block",
+                  flex: "auto",
+                  marginLeft: "16px",
+                }}
+              >
+                {str}
+              </span>
+            </div>
+          );
+        })}
       </AccordionPanel>
     </AccordionItem>
   );

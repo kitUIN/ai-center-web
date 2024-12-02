@@ -1,8 +1,17 @@
-import { DetailResponse, fetchGet, fetchGetDetail, fetchGetList, fetchGetSimple, fetchPost, fetchPostCreate, fetchPostDelete, fetchPostUpdate } from "./BaseFetch";
+import {
+  DetailResponse,
+  fetchGet,
+  fetchGetDetail,
+  fetchGetList,
+  fetchGetSimple,
+  fetchPost,
+  fetchPostDelete,
+  fetchPostUpdate,
+} from "./BaseFetch";
 import { AiModelPlan } from "./models/AiModelPlan";
 import { ModelId } from "./models/Base";
 import { TrainTask } from "./models/TrainTask";
-import { TrainTaskLog } from "./models/TrainTaskLog";
+import { TrainTaskLog, TrainTaskLogDetail } from "./models/TrainTaskLog";
 
 const baseApi = "/train/task/";
 /**
@@ -18,13 +27,16 @@ export async function trainTaskList(page: number = 1, limit: number = 20) {
  * 查询列表
  */
 export async function trainTaskSimple() {
-  return fetchGetSimple<AiModelPlan[]>('/train/plan/');
+  return fetchGetSimple<AiModelPlan[]>("/train/plan/");
 }
 /**
  * 创建
  */
-export async function trainTaskStart(planId:ModelId) {
-  return await fetchPost<DetailResponse<unknown>>(`/api/train/plan/${planId}/start/`, {} as Record<string, unknown>);
+export async function trainTaskStart(planId: ModelId) {
+  return await fetchPost<DetailResponse<unknown>>(
+    `/api/train/plan/${planId}/start/`,
+    {} as Record<string, unknown>
+  );
 }
 /**
  * 查询单个详情
@@ -51,5 +63,20 @@ export async function trainTaskDelete(id: ModelId) {
 }
 
 export async function trainTaskLog(id: ModelId) {
-  return await fetchGet<DetailResponse<TrainTaskLog>>(`/api${baseApi}${id}/log/`);
+  return await fetchGet<DetailResponse<TrainTaskLog>>(
+    `/api${baseApi}${id}/log/`
+  );
+}
+export async function trainTaskLogDetail(
+  id: ModelId,
+  log_type: string,
+  pos: number
+) {
+  return await fetchGet<DetailResponse<TrainTaskLogDetail>>(
+    `/api${baseApi}${id}/log/detail/`,
+    {
+      log_type: log_type,
+      pos: pos,
+    }
+  );
 }

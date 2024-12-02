@@ -73,7 +73,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     staleTime: 0,
   });
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [useTemplate, setuseTemplate] = React.useState(false);
+  const [useTemplate, setUseTemplate] = React.useState(false);
   const [args, setArgs] = React.useState<ArgData[]>([]);
   const defaultAiModelPlan: {
     name: string;
@@ -106,7 +106,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
       });
       setArgs(args);
     }
-    setuseTemplate(!useTemplate);
+    setUseTemplate(!useTemplate);
   };
   const handleSubmit = (ev: React.FormEvent) => {
     const { name, startup, requirements } = formData;
@@ -126,7 +126,8 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
           setDialogOpen(false);
           setFormData(defaultAiModelPlan);
           setArgs([]);
-          queryClient.refetchQueries({ queryKey: ["aiplans"], exact: true });
+          setUseTemplate(false)
+          queryClient.refetchQueries({ queryKey: ["aiPlans"], exact: true });
         } else {
           showNotification(resp.msg, "error");
         }
@@ -230,8 +231,10 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
               <Combobox
                 value={aiFileQuery.data?.data?.find(i=>i.id == formData.requirements)?.file || ""}
                 onOptionSelect={(_e, data) => {
-                  console.log(data.optionText)
-                  console.log(data.optionValue)
+                  setFormData({
+                    ...formData,
+                    ["requirements"]: data.optionValue,
+                  });
                 }}
                 style={{ width: "100%" }}
               >

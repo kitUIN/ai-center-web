@@ -11,3 +11,7 @@ export interface TrainTaskLog extends BaseModel {
   train_seconds: number;
   requirements_seconds: number;
 }
+export interface TrainTaskLogDetail {
+  pos: number;
+  lines: string[];
+}
