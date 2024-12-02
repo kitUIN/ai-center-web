@@ -19,10 +19,11 @@ import { DetailResponse } from "../utils/api/BaseFetch";
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
 interface DeleteButtonProps {
-  queryKey: string[];
+  queryKey?: string[];
   id: ModelId;
   icon?: JSX.Element;
   tooltip?:string;
+  title?:string;
   deleteReq: (id: ModelId) => Promise<DetailResponse<BaseModel>>;
 }
 export const DeleteButton:React.FC<DeleteButtonProps> = ({
@@ -30,6 +31,7 @@ export const DeleteButton:React.FC<DeleteButtonProps> = ({
   id,
   icon = <DeleteIcon />,
   tooltip = "删除",
+  title,
   deleteReq
 }) => {
   // const styles = useStyles();
@@ -43,7 +45,9 @@ export const DeleteButton:React.FC<DeleteButtonProps> = ({
       if (resp.code === 200) {
         setDialogOpen(false);
         showNotification(resp.msg, "success");
-        queryClient.refetchQueries({ queryKey: queryKey, exact: true });
+        if(queryKey){
+          queryClient.refetchQueries({ queryKey: queryKey, exact: true });
+        }
       } else {
         showNotification(resp.msg, "error");
       }
@@ -56,12 +60,14 @@ export const DeleteButton:React.FC<DeleteButtonProps> = ({
         <Tooltip content={tooltip} relationship="label">
         <Button
           appearance="transparent"
-          icon={ icon}
+          icon={icon}
           aria-label="Delete"
           onClick={() => {
             setDialogOpen(true);
           }}
-        />
+        >
+          {title ?? ""}
+        </Button>
         </Tooltip>
       </DialogTrigger>
       <DialogSurface aria-describedby={undefined}>
