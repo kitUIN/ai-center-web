@@ -31,7 +31,7 @@ import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiFileDelete, aiPlanList } from "../utils/api/AiModel";
+import { aiPlanDelete, aiPlanList } from "../utils/api/AiModel";
 import { DeleteButton } from "../components/DeleteButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AiModelPlan } from "../utils/api/models/AiModelPlan";
@@ -133,7 +133,7 @@ export const AiModelPlanPage = () => {
       return;
     }
     queryClient.refetchQueries({
-      queryKey: ["aimodels"],
+      queryKey: ["aiPlans"],
       exact: true,
     });
     console.log(current);
@@ -224,7 +224,7 @@ export const AiModelPlanPage = () => {
                         <DeleteButton
                           id={item.id}
                           queryKey={["aiPlans"]}
-                          deleteReq={(file_id) => aiFileDelete(id, file_id)}
+                          deleteReq={(plan_id) => aiPlanDelete(id, plan_id)}
                         />
                       </TableCellLayout>
                     </TableCell>
