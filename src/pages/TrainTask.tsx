@@ -287,7 +287,7 @@ export const TrainTaskPage = () => {
                         ) : (
                           <></>
                         )}
-                        {item.status === 2 || item.status === 4 ? (
+                        {item.status >= 2 ? (
                           <></>
                         ) : (
                           <DeleteButton

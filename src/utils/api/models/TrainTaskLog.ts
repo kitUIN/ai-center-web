@@ -1,17 +1,21 @@
 import { BaseModel } from "./Base";
+import { TrainTask } from "./TrainTask";
 
-export interface TrainTaskLog extends BaseModel {
-  total_seconds: number;
-  venv: number;
-  venv_seconds: number;
-  venv_start_datetime?: string;
-  venv_end_datetime?: string;
-  requirements: number;
-  train: number;
-  train_seconds: number;
-  requirements_seconds: number;
+
+
+export interface TrainTaskStep extends BaseModel {
+  seconds: number;
+  status: number;
+  start_datetime?: string;
+  end_datetime?: string;
+  name: string;
+}
+export interface TrainTaskLog extends TrainTask{
+  total_seconds:number,
+  steps: TrainTaskStep[]
 }
 export interface TrainTaskLogDetail {
   pos: number;
+  log_type: string;
   lines: string[];
 }

@@ -7,8 +7,8 @@ import {
 } from "@fluentui/react-components";
 import { MoreHorizontalFilled } from "@fluentui/react-icons";
 interface PagesProps {
-  currentPage: number;
-  totalPages: number;
+  currentPage?: number;
+  totalPages?: number;
   toPage: (to: number) => void;
 }
 const useStyles = makeStyles({
@@ -38,8 +38,8 @@ const useStyles = makeStyles({
 });
 
 const PageController: React.FC<PagesProps> = ({
-  currentPage,
-  totalPages,
+  currentPage=1,
+  totalPages=1,
   toPage,
 }) => {
   const styles = useStyles();

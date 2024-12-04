@@ -41,8 +41,8 @@ const useStyles = makeStyles({
       background: tokens.colorNeutralBackground1Hover,
     },
   },
-  contentIndex:{
-    color:"#212830",
+  contentIndex: {
+    color: "#212830",
     width: "48px",
     minWidth: "48px",
     overflow: "hidden",
@@ -63,6 +63,7 @@ interface TrainTaskLogAccordionProps {
   value: string;
   openItems: string[];
   content?: string[];
+  onToggle: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   status,
@@ -71,11 +72,13 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   value,
   openItems,
   content,
+  onToggle,
 }) => {
   const styles = useStyles();
-
   return (
-    <AccordionItem value={value}>
+    <AccordionItem value={value} onClick={() => {
+      onToggle(openItems.find((x) => x === value) ? [] : [value]);
+    }}>
       <AccordionHeader
         className={
           openItems.find((x) => x === value)
@@ -94,11 +97,8 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
       <AccordionPanel className={styles.accordionPanel}>
         {content?.map((str, index) => {
           return (
-            <div className={styles.contentLine}>
-              <span className={styles.contentIndex}
-              >
-                {index+1}
-              </span>
+            <div key={index} className={styles.contentLine}>
+              <span className={styles.contentIndex}>{index + 1}</span>
               <span
                 style={{
                   whiteSpace: "pre-warp",
