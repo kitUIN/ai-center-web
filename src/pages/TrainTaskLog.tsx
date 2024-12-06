@@ -7,6 +7,7 @@ import {
   Text,
   Subtitle2,
   Tag,
+  AccordionToggleEventHandler,
 } from "@fluentui/react-components";
 import {
   bundleIcon,
@@ -127,6 +128,9 @@ export const TrainTaskLogPage = () => {
     };
   }, []);
   // const navigate = useNavigate();
+  const handleToggle: AccordionToggleEventHandler<string> = (event, data) => {
+    setOpenItems(data.openItems);
+  };
   return (
     <Card className={styles.card}>
       <div style={{ height: "90%" }}>
@@ -210,7 +214,7 @@ export const TrainTaskLogPage = () => {
         />
         <Divider className={styles.divider} />
         <div className={styles.header}>
-          <Accordion openItems={openItems} collapsible>
+          <Accordion openItems={openItems} collapsible onToggle={handleToggle}>
             {aiLogQuery.data?.data?.steps.map((step) => (
               <TrainTaskLogAccordion
                 key={step.id}

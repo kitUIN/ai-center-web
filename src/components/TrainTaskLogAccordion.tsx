@@ -76,9 +76,7 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
 }) => {
   const styles = useStyles();
   return (
-    <AccordionItem value={value} onClick={() => {
-      onToggle(openItems.find((x) => x === value) ? [] : [value]);
-    }}>
+    <AccordionItem value={value}>
       <AccordionHeader
         className={
           openItems.find((x) => x === value)
