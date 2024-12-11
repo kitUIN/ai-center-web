@@ -16,6 +16,7 @@ import { AiModelPlanPage } from "../pages/AiModelPlan";
 import TrainTaskPage from "../pages/TrainTask";
 import TrainTaskLogPage from "../pages/TrainTaskLog";
 import AiPowerDetailPage from "../pages/AiPowerDetail";
+import AiModelPowerPage from "../pages/AiModelPower";
 
 interface PageWithAnimationProps {
   component: JSX.Element;
@@ -78,7 +79,7 @@ export const navItems: NavRouterItem[] = [
     path: "/model/power",
     show: true,
     icon: <BotSparkle />,
-    element: <About />,
+    element:  <PageWithAnimation component={<AiModelPowerPage />}/>,
   },
   {
     key: "model_file",
@@ -109,7 +110,7 @@ export const navItems: NavRouterItem[] = [
   },
   {
     key: "ai_power_detail",
-    name: "训练任务日志",
+    name: "模型能力详细",
     header: null,
     path: "/model/power/:id/detail",
     show: false,

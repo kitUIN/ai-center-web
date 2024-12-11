@@ -105,7 +105,7 @@ export interface PagedRequest {
 
 export async function fetchGetList<T>(
   api: string,
-  data?: T | PagedRequest | (T & PagedRequest) | null
+  data?: T | PagedRequest | (T & PagedRequest)| {[key:string]:unknown} | null
 ): Promise<ListResponse<T>> {
   return await fetchGet("/api" + api, data as Record<string, unknown>);
 }

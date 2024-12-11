@@ -42,7 +42,7 @@ import { trainTaskDelete, trainTaskList } from "../utils/api/TrainTask";
 import { TrainTask } from "../utils/api/models/TrainTask";
 import RingStatus from "../components/RingStatus";
 import { TrainTaskAdd } from "../components/TrainTaskAdd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const DismissCircleIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
 const BoxCheckmarkIcon = bundleIcon(BoxCheckmarkFilled, BoxCheckmarkRegular);
@@ -103,10 +103,24 @@ const useStyles = makeStyles({
 export const TrainTaskPage = () => {
   const styles = useStyles();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("page") === null) {
+      searchParams.set("page", "1");
+      setSearchParams(searchParams);
+      console.log(searchParams.get("page"));
+    }
+  }, []);
+
   const [current, setCurrent] = React.useState(1);
   const aiQuery = useQuery({
     queryKey: ["trainTasks"],
-    queryFn: () => trainTaskList(current),
+    queryFn: () =>
+      trainTaskList(
+        Number(searchParams.get("page")),
+        20,
+        searchParams.get("plan")
+      ),
     staleTime: 0,
   });
   const items = aiQuery.data?.data?.data ?? [];
@@ -137,6 +151,7 @@ export const TrainTaskPage = () => {
     ]
   );
   const [flag, setFlag] = React.useState(true);
+
   useEffect(() => {
     if (flag) {
       setFlag(false);
@@ -243,7 +258,7 @@ export const TrainTaskPage = () => {
                         shape="circular"
                         appearance="brand"
                         style={
-                          (item.status === 2 || item.status === 4)
+                          item.status === 2 || item.status === 4
                             ? { backgroundColor: "#FFF1F0", color: "#CF1322" }
                             : item.status === 0
                             ? { backgroundColor: "#FFF7E6", color: "#D46B08" }
@@ -270,18 +285,27 @@ export const TrainTaskPage = () => {
                             icon={<DocumentBulletListMultipleIcon />}
                             aria-label="DocumentBulletListMultiple"
                             onClick={() => {
-                              navigate(`/train/task/${item.id}/log`, {
-                                state: item,
-                              });
+                              window.open(
+                                item.log_url,
+                                "_blank",
+                                "noopener,noreferrer"
+                              );
                             }}
                           />
                         </Tooltip>
                         {item.status === 3 ? (
-                          <Tooltip content={"训练结果"} relationship={"label"}>
+                          <Tooltip content={"训练结果文件"} relationship={"label"}>
                             <Button
                               appearance="transparent"
                               icon={<BoxCheckmarkIcon />}
                               aria-label="BoxCheckmark"
+                              onClick={() => {
+                                window.open(
+                                  item.res_url,
+                                  "_blank",
+                                  "noopener,noreferrer"
+                                );
+                              }}
                             />
                           </Tooltip>
                         ) : (

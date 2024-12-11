@@ -36,4 +36,6 @@ export interface TrainTask extends BaseModel {
    * 运行状态
    */
   running_status?: string;
+  res_url?: string;
+  log_url?: string;
 }

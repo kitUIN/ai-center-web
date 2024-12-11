@@ -17,11 +17,17 @@ const baseApi = "/train/task/";
 /**
  * 查询列表
  */
-export async function trainTaskList(page: number = 1, limit: number = 20) {
-  return fetchGetList<TrainTask>(baseApi, {
+export async function trainTaskList(page: number = 1, limit: number = 20,plan?:string | null) {
+  const data:{
+    [key: string]: string |number; 
+} = {
     page: page,
     limit: limit,
-  });
+  }
+  if (plan!=null && plan !=undefined){
+    data["plan"] = plan;
+  }
+  return fetchGetList<TrainTask>(baseApi, data);
 }
 /**
  * 查询列表
