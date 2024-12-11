@@ -17,6 +17,8 @@ import {
   Combobox,
   Select,
   InfoLabel,
+  Textarea,
+  TextareaOnChangeData,
 } from "@fluentui/react-components";
 import {
   AddSquareFilled,
@@ -51,6 +53,10 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "4px",
   },
+  textArea:{
+    minHeight:"200px",
+    fontSize:"12px"
+  }
 });
 
 interface AiModelPlanAddProps {
@@ -154,8 +160,8 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     ]);
   };
   const handleChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    ev: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,
+    data: InputOnChangeData | TextareaOnChangeData
   ) => {
     const { name } = ev.target;
     let vData: string | StartupData = "";
@@ -227,41 +233,20 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                 onChange={handleChange}
                 id={"name"}
               />
-              <Label htmlFor={"requirements"}>依赖文件requirements.txt</Label>
-              <Combobox
-                value={aiFileQuery.data?.data?.find(i=>i.id == formData.requirements)?.file || ""}
-                onOptionSelect={(_e, data) => {
-                  setFormData({
-                    ...formData,
-                    ["requirements"]: data.optionValue,
-                  });
-                }}
-                style={{ width: "100%" }}
-              >
-                {aiFileQuery.data?.data?.map((fileItem) => (
-                  <Option
-                    key={fileItem.id}
-                    value={`${fileItem.id}`}
-                    checkIcon={<CheckmarkCircleRegular />}
-                  >{`${fileItem.file_name} #${fileItem.id}`}</Option>
-                ))}
-              </Combobox>
               <InfoLabel
                 required
                 htmlFor={"startup"}
                 info="使用{命令参数名称}来使用命令参数"
               >
-                启动命令
+                脚本
               </InfoLabel>
-              <Input
-                disabled={!formData.startup.allow_modify}
-                required
+              <Textarea resize="vertical"    disabled={!formData.startup.allow_modify}
+                required  textarea={{ className: styles.textArea }}
                 name="startup"
                 value={formData.startup.value}
                 onChange={handleChange}
-                id={"startup"}
-              />
-              <Label htmlFor={"args"}>启动参数</Label>
+                id={"startup"}/>
+              <Label htmlFor={"args"}>脚本参数</Label>
               {args.map((item) => (
                 <div key={item.id} className={styles.args}>
                   <div style={{ position: "relative", minWidth: "80px" }}>

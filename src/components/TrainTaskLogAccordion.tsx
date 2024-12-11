@@ -63,7 +63,6 @@ interface TrainTaskLogAccordionProps {
   value: string;
   openItems: string[];
   content?: string[];
-  onToggle: React.Dispatch<React.SetStateAction<string[]>>;
 }
 export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   status,
@@ -72,7 +71,6 @@ export const TrainTaskLogAccordion: React.FC<TrainTaskLogAccordionProps> = ({
   value,
   openItems,
   content,
-  onToggle,
 }) => {
   const styles = useStyles();
   return (
