@@ -1,7 +1,6 @@
 import {
   bundleIcon,
-  FolderOpenFilled,
-  FolderOpenRegular,
+  GlobeDesktopFilled, GlobeDesktopRegular
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -24,26 +23,41 @@ import {
   createTableColumn,
   TableColumnSizingOptions,
   useTableColumnSizing_unstable,
-  Tooltip,
-  ToolbarButton,
+  Tooltip, 
+  Button,
+  Tag,
 } from "@fluentui/react-components";
 import React, { useEffect } from "react";
 import PageController from "../components/PageController";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { aiPlanDelete } from "../utils/api/AiModel";
-import { DeleteButton } from "../components/DeleteButton";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AiModelPlanAdd } from "../components/AiModelPlanAdd";
-import { StartTaskButton } from "../components/StartTaskButton";
+import { useLocation, useNavigate } from "react-router-dom";
 import { aiPowerList } from "../utils/api/AiModelPower";
 import { AiModelPower } from "../utils/api/models/AiModelPower";
-const FolderOpenIcon = bundleIcon(FolderOpenFilled, FolderOpenRegular);
+const GlobeDesktopIcon = bundleIcon(GlobeDesktopFilled, GlobeDesktopRegular);
 const columns: TableColumnDefinition<AiModelPower>[] = [
   createTableColumn<AiModelPower>({
     columnId: "name",
     compare: (a, b) => {
       return a.name.localeCompare(b.name);
+    },
+  }),
+  createTableColumn<AiModelPower>({
+    columnId: "task_name",
+    compare: (a, b) => {
+      return a.task_name!.localeCompare(b.task_name!);
+    },
+  }),
+  createTableColumn<AiModelPower>({
+    columnId: "ai_model_name",
+    compare: (a, b) => {
+      return a.ai_model_name!.localeCompare(b.ai_model_name!);
+    },
+  }),
+  createTableColumn<AiModelPower>({
+    columnId: "configured",
+    compare: (a, b) => {
+      return Number(a.configured > b.configured);
     },
   }),
   createTableColumn<AiModelPower>({
@@ -77,7 +91,6 @@ const useStyles = makeStyles({
 });
 
 export const AiModelPowerPage = () => {
-  const { id } = useParams();
   const styles = useStyles();
   const queryClient = useQueryClient();
   const [current, setCurrent] = React.useState(1);
@@ -149,24 +162,7 @@ export const AiModelPowerPage = () => {
                 <b>{listName}</b>
               </Body1>
               <DataGridToolBar
-                surface={
-                  <>
-                  <AiModelPlanAdd itemId={Number(id)}></AiModelPlanAdd>
-                    <Tooltip content="文件列表" relationship="label">
-                      <ToolbarButton
-                        icon={<FolderOpenIcon />}
-                        aria-label="FolderOpen"
-                        onClick={() => {
-                          navigate(`/model/ai/${id}/file`, {
-                            state: location.state,
-                          });
-                        }}
-                      >
-                        文件列表
-                      </ToolbarButton>
-                    </Tooltip>
-                  </>
-                }
+                surface={<></>}
                 refreshClick={() =>
                   queryClient.refetchQueries({
                     queryKey: ["aiPlans"],
@@ -189,6 +185,15 @@ export const AiModelPowerPage = () => {
               <TableRow>
                 <TableHeaderCell {...headerSortProps("name")}>
                   名称
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("task_name")}>
+                  来源任务
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("ai_model_name")}>
+                  模型
+                </TableHeaderCell>
+                <TableHeaderCell {...headerSortProps("configured")}>
+                  是否配置
                 </TableHeaderCell>
                 <TableHeaderCell {...headerSortProps("update_datetime")}>
                   上次更新
@@ -213,6 +218,25 @@ export const AiModelPowerPage = () => {
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
                     <TableCell tabIndex={0} role="gridcell">
+                      <Tag size="small">{item.task_name} </Tag>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <Tag size="small">{item.ai_model_name} </Tag>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
+                      <Tag
+                        shape="circular"
+                        appearance="brand"
+                        style={
+                          item.configured
+                            ? { backgroundColor: "#F6FFED", color: "#389E0D", fontSize:"12px" }
+                            : { backgroundColor: "#FFF7E6", color: "#D46B08", fontSize:"12px"}
+                        }
+                      >
+                        {item.configured ? "已配置" : "未配置"}
+                      </Tag>
+                    </TableCell>
+                    <TableCell tabIndex={0} role="gridcell">
                       {item.update_datetime}
                     </TableCell>
                     <TableCell
@@ -221,12 +245,16 @@ export const AiModelPowerPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
-                        <StartTaskButton planId={item.id}></StartTaskButton>
-                        <DeleteButton
-                          id={item.id}
-                          queryKey={["aiPlans"]}
-                          deleteReq={(plan_id) => aiPlanDelete(id, plan_id)}
-                        />
+                        <Tooltip content="API" relationship="label">
+                          <Button
+                            appearance="transparent"
+                            icon={<GlobeDesktopIcon />}
+                            aria-label="Settings"
+                            onClick={() => {
+                              navigate(`/model/power/${item.id}/detail`)
+                            }}
+                          />
+                        </Tooltip>
                       </TableCellLayout>
                     </TableCell>
                   </TableRow>

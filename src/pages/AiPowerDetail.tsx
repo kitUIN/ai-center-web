@@ -8,6 +8,7 @@ import {
   Subtitle2,
   Tag,
   AccordionToggleEventHandler,
+  Body1,
 } from "@fluentui/react-components";
 import {
   bundleIcon,
@@ -29,7 +30,10 @@ import { secondsToString, toNow } from "../utils/DateUtils";
 import { DeleteButton } from "../components/DeleteButton";
 import { aiPowerDetail } from "../utils/api/AiModelPower";
 import { PowerApiKeyAdd } from "../components/PowerApiKeyAdd";
-
+import "../scss/0e5d75f9db3e818a.css";
+import CodeBox from "../components/CodeBox";
+import Code from "../components/Code";
+import { DataGridToolBar } from "../components/DataGridToolBar";
 const useStyles = makeStyles({
   card: {
     display: "flex",
@@ -49,6 +53,7 @@ const useStyles = makeStyles({
   },
   header: {
     overflowY: "auto",
+    padding: "1rem 1.5rem",
     maxHeight: "100%",
   },
   divider: {
@@ -68,20 +73,48 @@ export const AiPowerDetailPage = () => {
     staleTime: 0,
   });
   // const navigate = useNavigate();
-  
+
   return (
     <Card className={styles.card}>
       <div style={{ height: "90%" }}>
         <CardHeader
-           header={
-            <div>
-              {detailQuery.data?.data?.name}
+          header={
+            <div className={styles.cardHeader}>
+              <Body1>
+                <b>{detailQuery.data?.data?.name}</b>
+              </Body1>
+              <DataGridToolBar
+                showRefresh={false}
+                surface={<PowerApiKeyAdd powerId={id} />}
+              />
             </div>
-           }
+          }
         />
         <Divider className={styles.divider} />
         <div className={styles.header}>
-          <PowerApiKeyAdd powerId={id}/>
+          <div style={{ maxWidth: "50rem" }}>
+            <h3>Base URL</h3>
+            <CodeBox copyValue="https://api/v1">https://api/v1</CodeBox>
+            <h3>Authentication</h3>
+            <p style={{ margin: "1.5rem 0rem" }}>
+              Dify Service API 使用 <Code>API-Key</Code> 进行鉴权。
+              <i>
+                <strong>
+                  强烈建议开发者把 <Code>API-Key</Code>
+                  放在后端存储，而非分享或者放在客户端存储，以免
+                  <Code>API-Key</Code> 泄露，导致财产损失。
+                </strong>
+              </i>
+              所有 API 请求都应在
+              <strong>
+                <Code>Authorization</Code>
+              </strong>
+              HTTP Header 中包含您的 <Code>API-Key</Code>，如下所示：
+            </p>
+            <CodeBox copyValue={"Authorization: Bearer {API_KEY}"}>
+              {"Authorization: Bearer {API_KEY}"}
+            </CodeBox>
+          </div>
         </div>
       </div>
     </Card>

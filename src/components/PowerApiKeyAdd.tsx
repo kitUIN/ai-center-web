@@ -124,60 +124,64 @@ export const PowerApiKeyAdd: React.FC<PowerApiKeyAddProps> = ({ powerId }) => {
         <DialogBody>
           <DialogTitle>ApiKey设置</DialogTitle>
           <DialogContent className={styles.root}>
-            {apiKeyQuery.data?.data?.map((item) => (
-              <div className={styles.apiKeyLine}>
-                <span>{item.id}</span>
-                <div style={{ display: "flex" }}>
-                  <Tooltip content="点击复制" relationship="label">
-                    <ToolbarButton
-                      icon={<CopyIcon />}
-                      aria-label="Copy"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(`${item.id}`);
-                          showNotification("复制成功", "success");
-                        } catch (err) {
-                          console.error("复制失败", err);
-                          showNotification("复制失败", "error");
-                        }
-                      }}
-                    ></ToolbarButton>
-                  </Tooltip>
+            {(apiKeyQuery.data?.data?.length ?? 0 > 0) ? (
+              apiKeyQuery.data?.data?.map((item) => (
+                <div className={styles.apiKeyLine}>
+                  <span>{item.id}</span>
+                  <div style={{ display: "flex" }}>
+                    <Tooltip content="点击复制" relationship="label">
+                      <ToolbarButton
+                        icon={<CopyIcon />}
+                        aria-label="Copy"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(`${item.id}`);
+                            showNotification("复制成功", "success");
+                          } catch (err) {
+                            console.error("复制失败", err);
+                            showNotification("复制失败", "error");
+                          }
+                        }}
+                      ></ToolbarButton>
+                    </Tooltip>
 
-                  <Tooltip content="删除" relationship="label">
-                    <Popover withArrow>
-                      <PopoverTrigger disableButtonEnhancement>
-                        <Button
-                          appearance="transparent"
-                          icon={<DeleteIcon></DeleteIcon>}
-                          aria-label="Delete"
-                          onClick={() => {
-                            setDialogOpen(true);
-                          }}
-                        ></Button>
-                      </PopoverTrigger>
-
-                      <PopoverSurface>
-                        <div style={{ marginBottom: "12px" }}>
-                          确定删除吗?该操作不可逆
-                        </div>
-                        <div>
+                    <Tooltip content="删除" relationship="label">
+                      <Popover withArrow>
+                        <PopoverTrigger disableButtonEnhancement>
                           <Button
-                            style={{
-                              backgroundColor: "#D13438",
-                              color: "white",
+                            appearance="transparent"
+                            icon={<DeleteIcon></DeleteIcon>}
+                            aria-label="Delete"
+                            onClick={() => {
+                              setDialogOpen(true);
                             }}
-                            onClick={() => deleteKey(`${item.id}`)}
-                          >
-                            确定删除
-                          </Button>
-                        </div>
-                      </PopoverSurface>
-                    </Popover>
-                  </Tooltip>
+                          ></Button>
+                        </PopoverTrigger>
+
+                        <PopoverSurface>
+                          <div style={{ marginBottom: "12px" }}>
+                            确定删除吗?该操作不可逆
+                          </div>
+                          <div>
+                            <Button
+                              style={{
+                                backgroundColor: "#D13438",
+                                color: "white",
+                              }}
+                              onClick={() => deleteKey(`${item.id}`)}
+                            >
+                              确定删除
+                            </Button>
+                          </div>
+                        </PopoverSurface>
+                      </Popover>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div>暂无数据</div>
+            )}
           </DialogContent>
           <DialogActions>
             <Button appearance="secondary" onClick={() => addKey()}>

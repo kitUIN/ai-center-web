@@ -1,5 +1,5 @@
 import {
-  MoreHorizontal24Filled, 
+  MoreHorizontal24Filled,
   bundleIcon,
   ArrowClockwiseFilled,
   ArrowClockwiseRegular,
@@ -10,11 +10,12 @@ import {
   ToolbarDivider,
   Menu,
   MenuTrigger,
-  MenuPopover, 
+  MenuPopover,
 } from "@fluentui/react-components";
 interface ToolBarProps {
   surface: JSX.Element;
   moreList: JSX.Element;
+  showRefresh: boolean;
   refreshClick: () => void;
 }
 
@@ -23,10 +24,11 @@ export const DataGridToolBar = (props: Partial<ToolBarProps>) => {
   return (
     <Toolbar aria-label="Default" {...props}>
       {props.surface !== undefined && props.surface}
-      <ToolbarButton icon={<RefreshIcon />} onClick={props.refreshClick}>
-        刷新
-      </ToolbarButton>
-
+      {props.showRefresh !== false && (
+        <ToolbarButton icon={<RefreshIcon />} onClick={props.refreshClick}>
+          刷新
+        </ToolbarButton>
+      )}
       {props.moreList !== undefined && (
         <>
           <ToolbarDivider />
