@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   codePre: {
     color: "#ffffff",
     fontSize: ".75rem",
-    lineHeight: "1rem",
+    lineHeight: "2rem",
     padding: "1rem",
     overflowX: "auto",
   },
