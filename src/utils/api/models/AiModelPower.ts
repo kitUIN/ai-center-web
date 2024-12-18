@@ -23,8 +23,22 @@ export interface AiModelPower extends BaseModel {
   /**
    * 是否已经配置
    */
-  configured:boolean;
+  configured: boolean;
 }
-export interface AiModelPowerKey extends BaseModel{
-    key:string
+export interface AiModelPowerKey extends BaseModel {
+  key: string;
+}
+export interface AiModelPowerDoc {
+  name: string;
+  description: string;
+  method: string;
+  api: string;
+  content_type: string;
+  request_body: string;
+  response_body: string;
+  request_example: string;
+  response_example: string;
+}
+export interface AiModelPowerDetail extends AiModelPower {
+  doc: Array<AiModelPowerDoc>
 }

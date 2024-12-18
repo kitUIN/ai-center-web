@@ -2,38 +2,30 @@ import {
   makeStyles,
   Card,
   CardHeader,
-  Accordion,
   Divider,
-  Text,
-  Subtitle2,
-  Tag,
-  AccordionToggleEventHandler,
   Body1,
+  Tag,
+  Text,
+  Title3,
+  Subtitle1,
+  Subtitle2,
 } from "@fluentui/react-components";
 import {
   bundleIcon,
   DismissCircleFilled,
   DismissCircleRegular,
 } from "@fluentui/react-icons";
-import React, { useEffect } from "react";
+import remarkGfm from "remark-gfm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 // import { useNavigate } from "react-router-dom";
-import {
-  trainTaskDelete,
-  trainTaskDetail,
-  trainTaskLog,
-  trainTaskLogDetail,
-} from "../utils/api/TrainTask";
 import { useParams } from "react-router-dom";
-import { TrainTaskLogAccordion } from "../components/TrainTaskLogAccordion";
-import { secondsToString, toNow } from "../utils/DateUtils";
-import { DeleteButton } from "../components/DeleteButton";
 import { aiPowerDetail } from "../utils/api/AiModelPower";
 import { PowerApiKeyAdd } from "../components/PowerApiKeyAdd";
-import "../scss/0e5d75f9db3e818a.css";
 import CodeBox from "../components/CodeBox";
 import Code from "../components/Code";
 import { DataGridToolBar } from "../components/DataGridToolBar";
+import ReactMarkdown from "react-markdown";
+import { Fragment } from "react/jsx-runtime";
 const useStyles = makeStyles({
   card: {
     display: "flex",
@@ -60,9 +52,7 @@ const useStyles = makeStyles({
     margin: "10px 0px",
   },
 });
-
-const DismissCircleIcon = bundleIcon(DismissCircleFilled, DismissCircleRegular);
-
+ 
 export const AiPowerDetailPage = () => {
   const { id } = useParams();
   const styles = useStyles();
@@ -73,7 +63,6 @@ export const AiPowerDetailPage = () => {
     staleTime: 0,
   });
   // const navigate = useNavigate();
-
   return (
     <Card className={styles.card}>
       <div style={{ height: "90%" }}>
@@ -94,7 +83,7 @@ export const AiPowerDetailPage = () => {
         <div className={styles.header}>
           <div style={{ maxWidth: "50rem" }}>
             <h3>Base URL</h3>
-            <CodeBox copyValue="https://api/v1">https://api/v1</CodeBox>
+            <CodeBox  >http://localhost:8000/api/v1</CodeBox>
             <h3>Authentication</h3>
             <p style={{ margin: "1.5rem 0rem" }}>
               Dify Service API 使用 <Code>API-Key</Code> 进行鉴权。
@@ -111,9 +100,66 @@ export const AiPowerDetailPage = () => {
               </strong>
               HTTP Header 中包含您的 <Code>API-Key</Code>，如下所示：
             </p>
-            <CodeBox copyValue={"Authorization: Bearer {API_KEY}"}>
+            <CodeBox >
               {"Authorization: Bearer {API_KEY}"}
             </CodeBox>
+            <h2
+              style={{
+                marginBottom: "2rem",
+              }}
+            >
+              API
+            </h2>
+            {detailQuery.data?.data?.doc.map((item) => {
+              return (
+                <div>
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        alignItems: "center",
+                        marginBottom: "4px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <Tag size="small" shape="circular" appearance="brand">
+                        {item.method}
+                      </Tag>
+                      <Text style={{ color: "#a1a1aa" }}>{item.api}</Text>
+                    </div>
+                    <Subtitle1>{item.name}</Subtitle1>
+                  </div>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code(props) {
+                        const { className, node, ...rest } = props;
+                        console.log(node);
+                        if (className) {
+                          return <CodeBox {...rest}></CodeBox>;
+                        }
+                        return <Code {...rest} />;
+                      },
+                    }}
+                  >{`
+${item.description}
+#### Content Type
+
+- \`${item.content_type}\`
+
+#### Request Body
+
+${item.request_body}
+
+#### Response
+
+${item.response_body}
+
+`}</ReactMarkdown>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

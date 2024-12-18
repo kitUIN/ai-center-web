@@ -8,7 +8,7 @@ import {
   fetchPostDelete,
   fetchPostUpdate,
 } from "./BaseFetch";
-import { AiModelPower, AiModelPowerKey } from "./models/AiModelPower";
+import { AiModelPower, AiModelPowerDetail, AiModelPowerKey } from "./models/AiModelPower";
 import { ModelId } from "./models/Base";
 
 const baseApi = "/ai/power/";
@@ -32,7 +32,7 @@ export async function aiPowerCreate(data: AiModelPower) {
  * @param id id
  */
 export async function aiPowerDetail(id: ModelId) {
-  return fetchGetDetail<AiModelPower>(baseApi, id);
+  return fetchGetDetail<AiModelPowerDetail>(baseApi, id);
 }
 
 /**

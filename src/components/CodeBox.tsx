@@ -33,8 +33,9 @@ const useStyles = makeStyles({
   codePre: {
     color: "#ffffff",
     fontSize: ".75rem",
-    lineHeight: "2rem",
+    lineHeight: "1rem",
     padding: "1rem",
+    margin:"0px",
     overflowX: "auto",
   },
   relative: {
@@ -47,7 +48,7 @@ const useStyles = makeStyles({
   },
 });
 interface CodeBoxProps {
-  copyValue: string;
+  copyValue?: string;
 }
 
 const CodeBox: React.FC<React.PropsWithChildren<CodeBoxProps>> = ({
@@ -78,7 +79,8 @@ const CodeBox: React.FC<React.PropsWithChildren<CodeBoxProps>> = ({
             aria-label="Copy"
             onClick={async () => {
               try {
-                await navigator.clipboard.writeText(copyValue);
+                const text = copyValue===undefined ? String(children): copyValue;
+                await navigator.clipboard.writeText(text);
                 showNotification("复制成功", "success");
               } catch (err) {
                 console.error("复制失败", err);
