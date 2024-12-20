@@ -9,6 +9,8 @@ import {
   Title3,
   Subtitle1,
   Subtitle2,
+  Tooltip,
+  ToolbarButton,
 } from "@fluentui/react-components";
 import {
   bundleIcon,
@@ -52,7 +54,7 @@ const useStyles = makeStyles({
     margin: "10px 0px",
   },
 });
- 
+
 export const AiPowerDetailPage = () => {
   const { id } = useParams();
   const styles = useStyles();
@@ -74,16 +76,31 @@ export const AiPowerDetailPage = () => {
               </Body1>
               <DataGridToolBar
                 showRefresh={false}
-                surface={<PowerApiKeyAdd powerId={id} />}
+                surface={
+                  <>
+                    <Tooltip content="状态" relationship="label">
+                      <ToolbarButton
+                        // icon={<KeyIcon />}
+                        aria-label="Play"
+                      >
+                        状态:{" "}
+                        {detailQuery.data?.data?.configured
+                          ? "运行中"
+                          : "未配置"}
+                      </ToolbarButton>
+                    </Tooltip>
+                    <PowerApiKeyAdd powerId={id} />
+                  </>
+                }
               />
             </div>
           }
         />
         <Divider className={styles.divider} />
         <div className={styles.header}>
-          <div style={{ maxWidth: "50rem" }}>
+          <div style={{ maxWidth: "50rem", marginBottom: "3rem" }}>
             <h3>Base URL</h3>
-            <CodeBox  >http://localhost:8000/api/v1</CodeBox>
+            <CodeBox>http://localhost:8000/api/v1</CodeBox>
             <h3>Authentication</h3>
             <p style={{ margin: "1.5rem 0rem" }}>
               Dify Service API 使用 <Code>API-Key</Code> 进行鉴权。
@@ -100,9 +117,7 @@ export const AiPowerDetailPage = () => {
               </strong>
               HTTP Header 中包含您的 <Code>API-Key</Code>，如下所示：
             </p>
-            <CodeBox >
-              {"Authorization: Bearer {API_KEY}"}
-            </CodeBox>
+            <CodeBox>{"Authorization: Bearer {API_KEY}"}</CodeBox>
             <h2
               style={{
                 marginBottom: "2rem",

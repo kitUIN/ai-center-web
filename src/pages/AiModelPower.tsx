@@ -1,6 +1,6 @@
 import {
   bundleIcon,
-  GlobeDesktopFilled, GlobeDesktopRegular
+  GlobeDesktopFilled, GlobeDesktopRegular,RenameFilled, RenameRegular
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -34,7 +34,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { aiPowerList } from "../utils/api/AiModelPower";
 import { AiModelPower } from "../utils/api/models/AiModelPower";
+import { AiPowerRename } from "../components/AiPowerRename";
 const GlobeDesktopIcon = bundleIcon(GlobeDesktopFilled, GlobeDesktopRegular);
+const RenameIcon = bundleIcon(RenameFilled, RenameRegular);
 const columns: TableColumnDefinition<AiModelPower>[] = [
   createTableColumn<AiModelPower>({
     columnId: "name",
@@ -61,9 +63,9 @@ const columns: TableColumnDefinition<AiModelPower>[] = [
     },
   }),
   createTableColumn<AiModelPower>({
-    columnId: "update_datetime",
+    columnId: "create_datetime",
     compare: (a, b) => {
-      return a.update_datetime?.localeCompare(b.update_datetime!) ?? 1;
+      return a.create_datetime?.localeCompare(b.create_datetime!) ?? 1;
     },
   }),
 ];
@@ -119,7 +121,7 @@ export const AiModelPowerPage = () => {
     },
     [
       useTableSort({
-        defaultSortState: { sortColumn: "name", sortDirection: "ascending" },
+        defaultSortState: { sortColumn: "create_datetime", sortDirection: "descending" },
       }),
       useTableColumnSizing_unstable({ columnSizingOptions }),
     ]
@@ -195,8 +197,8 @@ export const AiModelPowerPage = () => {
                 <TableHeaderCell {...headerSortProps("configured")}>
                   是否配置
                 </TableHeaderCell>
-                <TableHeaderCell {...headerSortProps("update_datetime")}>
-                  上次更新
+                <TableHeaderCell {...headerSortProps("create_datetime")}>
+                  创建时间
                 </TableHeaderCell>
                 <TableHeaderCell key="actions">操作</TableHeaderCell>
               </TableRow>
@@ -245,6 +247,7 @@ export const AiModelPowerPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
+                        <AiPowerRename itemId={item.id} item={item}></AiPowerRename>
                         <Tooltip content="API" relationship="label">
                           <Button
                             appearance="transparent"
