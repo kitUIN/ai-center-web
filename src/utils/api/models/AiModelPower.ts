@@ -28,6 +28,7 @@ export interface AiModelPower extends BaseModel {
 export interface AiModelPowerKey extends BaseModel {
   key: string;
 }
+
 export interface AiModelPowerDoc {
   name: string;
   description: string;

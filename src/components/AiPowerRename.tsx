@@ -12,13 +12,10 @@ import {
   Label,
   Input,
   InputOnChangeData,
-  ToolbarButton,
   TextareaOnChangeData,
   Tooltip,
 } from "@fluentui/react-components";
 import {
-  AddSquareFilled,
-  AddSquareRegular,
   bundleIcon,
   RenameFilled,
   RenameRegular,
@@ -29,7 +26,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AiModelPower } from "../utils/api/models/AiModelPower";
 import { aiPowerUpdate } from "../utils/api/AiModelPower";
 import { ModelId } from "../utils/api/models/Base";
-const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 const RenameIcon = bundleIcon(RenameFilled, RenameRegular);
 const useStyles = makeStyles({
   content: {

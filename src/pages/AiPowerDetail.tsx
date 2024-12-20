@@ -6,19 +6,12 @@ import {
   Body1,
   Tag,
   Text,
-  Title3,
   Subtitle1,
-  Subtitle2,
   Tooltip,
   ToolbarButton,
 } from "@fluentui/react-components";
-import {
-  bundleIcon,
-  DismissCircleFilled,
-  DismissCircleRegular,
-} from "@fluentui/react-icons";
 import remarkGfm from "remark-gfm";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 // import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { aiPowerDetail } from "../utils/api/AiModelPower";
@@ -27,7 +20,6 @@ import CodeBox from "../components/CodeBox";
 import Code from "../components/Code";
 import { DataGridToolBar } from "../components/DataGridToolBar";
 import ReactMarkdown from "react-markdown";
-import { Fragment } from "react/jsx-runtime";
 const useStyles = makeStyles({
   card: {
     display: "flex",
@@ -58,7 +50,7 @@ const useStyles = makeStyles({
 export const AiPowerDetailPage = () => {
   const { id } = useParams();
   const styles = useStyles();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const detailQuery = useQuery({
     queryKey: [`aiPowerDetail_${id}`],
     queryFn: () => aiPowerDetail(id),

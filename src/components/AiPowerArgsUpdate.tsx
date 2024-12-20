@@ -12,33 +12,28 @@ import {
   Label,
   Input,
   InputOnChangeData,
-  ToolbarButton,
   Option,
   Combobox,
   Select,
   InfoLabel,
-  Textarea,
-  TextareaOnChangeData,
+  Tooltip,
 } from "@fluentui/react-components";
 import {
-  AddSquareFilled,
-  AddSquareRegular,
   bundleIcon,
   CheckmarkCircleRegular,
   DeleteDismissFilled,
   DeleteDismissRegular,
+  SettingsFilled,
+  SettingsRegular,
 } from "@fluentui/react-icons";
 import { ChangeEvent } from "react";
 import { useNotification } from "../utils/notification/Notification";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  aiFileSimpleList,
-  aiPlanCreate,
-  aiPlanTemplateList,
-} from "../utils/api/AiModel";
-import { ArgData, StartupData } from "../utils/api/models/PlanTemplate";
+import { aiFileSimpleList } from "../utils/api/AiModel";
+import { ArgData } from "../utils/api/models/PlanTemplate";
+import { aiPowerArgs, aiPowerArgsUpdate } from "../utils/api/AiModelPower";
 import { ModelId } from "../utils/api/models/Base";
-const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
+const SettingsIcon = bundleIcon(SettingsFilled, SettingsRegular);
 const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
   content: {
@@ -53,87 +48,40 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "4px",
   },
-  textArea:{
-    minHeight:"200px",
-    fontSize:"12px"
-  }
+  textArea: {
+    minHeight: "200px",
+    fontSize: "12px",
+  },
 });
 
-interface AiModelPlanAddProps {
-  itemId: number;
+interface AiPowerArgsUpdateProps {
+  itemId: ModelId;
+  aiId: ModelId;
 }
-export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
+export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
+  itemId,
+  aiId,
+}) => {
   const styles = useStyles();
   const { showNotification } = useNotification();
 
   const queryClient = useQueryClient();
-  const aiFileQuery = useQuery({
-    queryKey: [`aifilesAdd_${itemId}`],
-    queryFn: () => aiFileSimpleList(itemId),
-    staleTime: 0,
-  });
 
-  const aiPlanTemplateQuery = useQuery({
-    queryKey: [`aiPlanTemplate_${itemId}`],
-    queryFn: () => aiPlanTemplateList(itemId),
+  const aiFileQuery = useQuery({
+    queryKey: [`aifilesAdd_${aiId}`],
+    queryFn: () => aiFileSimpleList(aiId),
     staleTime: 0,
   });
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [useTemplate, setUseTemplate] = React.useState(false);
   const [args, setArgs] = React.useState<ArgData[]>([]);
-  const defaultAiModelPlan: {
-    name: string;
-    startup: StartupData;
-    requirements?: ModelId;
-  } = {
-    name: "",
-    startup: {
-      value: "",
-      allow_modify: true,
-    },
-    requirements: null,
-  };
-  const [formData, setFormData] = React.useState(defaultAiModelPlan);
-  const changeTemplate = () => {
-    if (useTemplate) {
-      setFormData({
-        ...formData,
-        ["startup"]: {
-          value: "",
-          allow_modify: true,
-        },
-      });
-      setArgs([]);
-    } else if (aiPlanTemplateQuery.data?.data) {
-      const { args, startup } = aiPlanTemplateQuery.data.data;
-      setFormData({
-        ...formData,
-        ["startup"]: startup,
-      });
-      setArgs(args);
-    }
-    setUseTemplate(!useTemplate);
-  };
   const handleSubmit = (ev: React.FormEvent) => {
-    const { name, startup, requirements } = formData;
-    aiPlanCreate(itemId, {
-      name: name,
-      startup: startup.value,
-      ai_model: itemId,
-      id: null,
-      requirements: requirements,
-      create_datetime: null,
-      update_datetime: null,
-      args: JSON.stringify(args),
-    })
+    aiPowerArgsUpdate(itemId, JSON.stringify(args))
       .then((resp) => {
         if (resp.code === 200) {
           showNotification(resp.msg, "success");
           setDialogOpen(false);
-          setFormData(defaultAiModelPlan);
           setArgs([]);
-          setUseTemplate(false)
-          queryClient.refetchQueries({ queryKey: ["aiPlans"], exact: true });
+          queryClient.refetchQueries({ queryKey: ["aiPowers"], exact: true });
         } else {
           showNotification(resp.msg, "error");
         }
@@ -158,25 +106,6 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
         allow_modify: true,
       },
     ]);
-  };
-  const handleChange = (
-    ev: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,
-    data: InputOnChangeData | TextareaOnChangeData
-  ) => {
-    const { name } = ev.target;
-    let vData: string | StartupData = "";
-    if (name === "startup") {
-      vData = {
-        ...formData.startup,
-        ["value"]: data.value,
-      };
-    } else {
-      vData = data.value;
-    }
-    setFormData({
-      ...formData,
-      [name]: vData,
-    });
   };
   const handleArgValueChange = (
     ev: ChangeEvent<HTMLInputElement>,
@@ -208,45 +137,27 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
   return (
     <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
-        <ToolbarButton
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-          icon={<AddButtonIcon />}
-        >
-          新增
-        </ToolbarButton>
+        <Tooltip content="配置" relationship="label">
+          <Button
+            appearance="transparent"
+            icon={<SettingsIcon />}
+            aria-label="config"
+            onClick={async () => {
+              setDialogOpen(true);
+              const response = await aiPowerArgs(itemId);
+              if (response.data) {
+                setArgs(response.data);
+              }
+            }}
+          />
+        </Tooltip>
       </DialogTrigger>
       <DialogSurface aria-describedby={undefined}>
         <form onSubmit={handleSubmit}>
           <DialogBody>
-            <DialogTitle>新增训练计划</DialogTitle>
+            <DialogTitle>配置参数</DialogTitle>
             <DialogContent className={styles.content}>
-              <Label required htmlFor={"name"}>
-                训练计划名称
-              </Label>
-
-              <Input
-                required
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                id={"name"}
-              />
-              <InfoLabel
-                required
-                htmlFor={"startup"}
-                info="使用{命令参数名称}来使用命令参数"
-              >
-                脚本
-              </InfoLabel>
-              <Textarea resize="vertical"    disabled={!formData.startup.allow_modify}
-                required  textarea={{ className: styles.textArea }}
-                name="startup"
-                value={formData.startup.value}
-                onChange={handleChange}
-                id={"startup"}/>
-              <Label htmlFor={"args"}>脚本参数</Label>
+              <Label htmlFor={"args"}>配置参数</Label>
               {args.map((item) => (
                 <div key={item.id} className={styles.args}>
                   <div style={{ position: "relative", minWidth: "80px" }}>
@@ -342,9 +253,6 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
             </DialogContent>
 
             <DialogActions>
-              <Button onClick={changeTemplate}>
-                {useTemplate ? "使用自定义" : "使用模板"}
-              </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button
                   appearance="secondary"

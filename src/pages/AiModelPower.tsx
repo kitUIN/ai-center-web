@@ -1,6 +1,6 @@
 import {
   bundleIcon,
-  GlobeDesktopFilled, GlobeDesktopRegular,RenameFilled, RenameRegular
+  GlobeDesktopFilled, GlobeDesktopRegular,
 } from "@fluentui/react-icons";
 import {
   TableCellLayout,
@@ -35,8 +35,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { aiPowerList } from "../utils/api/AiModelPower";
 import { AiModelPower } from "../utils/api/models/AiModelPower";
 import { AiPowerRename } from "../components/AiPowerRename";
+import { AiPowerArgsUpdate } from "../components/AiPowerArgsUpdate";
 const GlobeDesktopIcon = bundleIcon(GlobeDesktopFilled, GlobeDesktopRegular);
-const RenameIcon = bundleIcon(RenameFilled, RenameRegular);
 const columns: TableColumnDefinition<AiModelPower>[] = [
   createTableColumn<AiModelPower>({
     columnId: "name",
@@ -247,7 +247,8 @@ export const AiModelPowerPage = () => {
                       {...focusableGroupAttr}
                     >
                       <TableCellLayout>
-                        <AiPowerRename itemId={item.id} item={item}></AiPowerRename>
+                      <AiPowerRename itemId={item.id} item={item}></AiPowerRename>
+                      <AiPowerArgsUpdate itemId={item.id} aiId={item.ai_model}></AiPowerArgsUpdate>
                         <Tooltip content="API" relationship="label">
                           <Button
                             appearance="transparent"

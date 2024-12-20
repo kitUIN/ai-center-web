@@ -8,8 +8,13 @@ import {
   fetchPostDelete,
   fetchPostUpdate,
 } from "./BaseFetch";
-import { AiModelPower, AiModelPowerDetail, AiModelPowerKey } from "./models/AiModelPower";
+import {
+  AiModelPower,
+  AiModelPowerDetail,
+  AiModelPowerKey,
+} from "./models/AiModelPower";
 import { ModelId } from "./models/Base";
+import { ArgData } from "./models/PlanTemplate";
 
 const baseApi = "/ai/power/";
 /**
@@ -62,8 +67,18 @@ export async function aiPowerApiKeyCreate(
   return await fetchPost(`/api${baseApi}${id}/key/`);
 }
 export async function aiPowerApiKeyDelete(
-    id: ModelId,
-    apiKey:string,
-  ): Promise<DetailResponse<AiModelPowerKey>> {
-    return await fetchPost(`/api${baseApi}${id}/key/${apiKey}/delete/`);
-  }
+  id: ModelId,
+  apiKey: string
+): Promise<DetailResponse<AiModelPowerKey>> {
+  return await fetchPost(`/api${baseApi}${id}/key/${apiKey}/delete/`);
+}
+
+export async function aiPowerArgs(id: ModelId) {
+  return await fetchGet<DetailResponse<Array<ArgData>>>(`/api${baseApi}${id}/args/`);
+}
+
+export async function aiPowerArgsUpdate(id: ModelId, args: string) {
+  return fetchPost<DetailResponse<unknown>>(`/api${baseApi}${id}/args/`, {
+    args: args,
+  });
+}
