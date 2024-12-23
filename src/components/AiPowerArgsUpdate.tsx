@@ -10,34 +10,23 @@ import {
   Button,
   makeStyles,
   Label,
-  Input,
-  InputOnChangeData,
-  Option,
-  Combobox,
-  Select,
-  InfoLabel,
   Tooltip,
+  tokens,
 } from "@fluentui/react-components";
 import {
   bundleIcon,
-  CheckmarkCircleRegular,
-  DeleteDismissFilled,
-  DeleteDismissRegular,
   SettingsFilled,
   SettingsRegular,
-  InfoFilled,
-  InfoRegular,
 } from "@fluentui/react-icons";
-import { ChangeEvent } from "react";
 import { useNotification } from "../utils/notification/Notification";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { aiFileSimpleList } from "../utils/api/AiModel";
 import { ArgData } from "../utils/api/models/PlanTemplate";
 import { aiPowerArgs, aiPowerArgsUpdate } from "../utils/api/AiModelPower";
 import { ModelId } from "../utils/api/models/Base";
+import { CustomArg } from "./CustomArg";
+import { AiModelFile } from "../utils/api/models/AiModelFile";
 const SettingsIcon = bundleIcon(SettingsFilled, SettingsRegular);
-const InfoIcon = bundleIcon(InfoFilled, InfoRegular);
-const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
   content: {
     display: "flex",
@@ -55,6 +44,12 @@ const useStyles = makeStyles({
     minHeight: "200px",
     fontSize: "12px",
   },
+  containerTop: {
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    rowGap: tokens.spacingVerticalM,
+  },
 });
 
 interface AiPowerArgsUpdateProps {
@@ -70,13 +65,9 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
 
   const queryClient = useQueryClient();
 
-  const aiFileQuery = useQuery({
-    queryKey: [`aifilesAdd_${aiId}`],
-    queryFn: () => aiFileSimpleList(aiId),
-    staleTime: 0,
-  });
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [args, setArgs] = React.useState<ArgData[]>([]);
+  const [files, setFiles] = React.useState<AiModelFile[]>([]);
   const handleSubmit = (ev: React.FormEvent) => {
     aiPowerArgsUpdate(itemId, JSON.stringify(args))
       .then((resp) => {
@@ -94,8 +85,30 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
       });
     ev.preventDefault();
   };
-  const handleDeleteArg = (id: number) => {
-    setArgs((prevArgs) => prevArgs.filter((arg) => arg.id !== id));
+
+  const start = () => {
+    aiPowerArgs(itemId)
+      .then((resp) => {
+        if (resp.code === 200 && resp.data) {
+          setArgs(resp.data);
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
+    aiFileSimpleList(aiId)
+      .then((resp) => {
+        if (resp.code === 200 && resp.data) {
+          setFiles(resp.data);
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
   };
   const handleAddArg = () => {
     const c = args.length > 0 ? args[args.length - 1].id + 1 : 1;
@@ -110,32 +123,6 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
       },
     ]);
   };
-  const handleArgValueChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
-  ) => {
-    handleArgChange(ev, data, "value");
-  };
-  const handleArgNameChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
-  ) => {
-    handleArgChange(ev, data, "name");
-  };
-
-  const handleArgChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData,
-    argName: string
-  ) => {
-    const { name } = ev.target;
-    const targetId = Number(name);
-    setArgs((prevArgs) =>
-      prevArgs.map((arg) =>
-        arg.id === targetId ? { ...arg, [argName]: data.value } : arg
-      )
-    );
-  };
 
   return (
     <Dialog modalType="modal" open={dialogOpen}>
@@ -147,10 +134,7 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
             aria-label="config"
             onClick={async () => {
               setDialogOpen(true);
-              const response = await aiPowerArgs(itemId);
-              if (response.data) {
-                setArgs(response.data);
-              }
+              start();
             }}
           />
         </Tooltip>
@@ -161,87 +145,16 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
             <DialogTitle>配置参数</DialogTitle>
             <DialogContent className={styles.content}>
               <Label htmlFor={"args"}>配置参数</Label>
-              {args.map((item) => (
-                <div key={item.id} className={styles.args}>
-                  {item.info && <InfoLabel info={item.info} />}
-                  <div style={{ position: "relative", minWidth: "80px" }}>
-                    <Input
-                      disabled={!item.allow_modify}
-                      required
-                      style={{ minWidth: "80px", maxWidth: "80px" }}
-                      value={item.name}
-                      name={`${item.id}`}
-                      onChange={handleArgNameChange}
-                    />
-                  </div>
-
-                  <Select
-                    disabled={!item.allow_modify}
-                    onChange={(_event, data) => {
-                      setArgs((prevArgs) =>
-                        prevArgs.map((arg) =>
-                          arg.id === item.id
-                            ? {
-                                ...arg,
-                                ["type"]:
-                                  data.value === "file" ? "file" : "string",
-                              }
-                            : arg
-                        )
-                      );
-                    }}
-                    value={item.type || "string"}
-                    style={{ minWidth: "80px", maxWidth: "80px" }}
-                  >
-                    <option key="string" value="string">
-                      字符
-                    </option>
-                    <option key="file" value="file">
-                      文件
-                    </option>
-                  </Select>
-                  {item.type == "string" ? (
-                    <Input
-                      style={{ width: "100%" }}
-                      required
-                      name={`${item.id}`}
-                      value={item.value}
-                      onChange={handleArgValueChange}
-                    />
-                  ) : (
-                    <Combobox
-                      value={item.value || ""}
-                      onOptionSelect={(_e, data) => {
-                        setArgs((prevArgs) =>
-                          prevArgs.map((arg) =>
-                            arg.id === item.id
-                              ? {
-                                  ...arg,
-                                  ["value"]: data.optionText ?? "",
-                                }
-                              : arg
-                          )
-                        );
-                      }}
-                      style={{ width: "100%" }}
-                    >
-                      {aiFileQuery.data?.data?.map((fileItem) => (
-                        <Option
-                          key={fileItem.id}
-                          value={`#${fileItem.id}`}
-                          checkIcon={<CheckmarkCircleRegular />}
-                        >{`${fileItem.file_name} #${fileItem.id}`}</Option>
-                      ))}
-                    </Combobox>
-                  )}
-
-                  <Button
-                    disabled={!item.allow_modify}
-                    icon={<DeleteDismissIcon />}
-                    onClick={() => handleDeleteArg(item.id)}
-                  ></Button>
-                </div>
-              ))}
+              <div className={styles.containerTop}>
+                {args.map((item) => (
+                  <CustomArg
+                    key={item.id}
+                    item={item}
+                    files={files}
+                    setArgs={setArgs}
+                  ></CustomArg>
+                ))}
+              </div>
               <Button onClick={handleAddArg}>新增参数</Button>
             </DialogContent>
 

@@ -13,24 +13,19 @@ import {
   Input,
   InputOnChangeData,
   ToolbarButton,
-  Option,
-  Combobox,
-  Select,
   InfoLabel,
   Textarea,
   TextareaOnChangeData,
+  tokens,
 } from "@fluentui/react-components";
 import {
   AddSquareFilled,
   AddSquareRegular,
   bundleIcon,
-  CheckmarkCircleRegular,
-  DeleteDismissFilled,
-  DeleteDismissRegular,
 } from "@fluentui/react-icons";
 import { ChangeEvent } from "react";
 import { useNotification } from "../utils/notification/Notification";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   aiFileSimpleList,
   aiPlanCreate,
@@ -38,8 +33,9 @@ import {
 } from "../utils/api/AiModel";
 import { ArgData, StartupData } from "../utils/api/models/PlanTemplate";
 import { ModelId } from "../utils/api/models/Base";
+import { AiModelFile } from "../utils/api/models/AiModelFile";
+import { CustomArg } from "./CustomArg";
 const AddButtonIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
-const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
   content: {
     display: "flex",
@@ -50,12 +46,44 @@ const useStyles = makeStyles({
     width: "30px",
   },
   args: {
+    alignItems: "center",
     display: "flex",
     gap: "4px",
   },
   textArea: {
     minHeight: "200px",
     fontSize: "12px",
+  },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    rowGap: tokens.spacingVerticalS,
+  },
+  containerTop: {
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    rowGap: tokens.spacingVerticalM,
+  },
+  containerOut: {
+    width: "100%",
+    display: "flex",
+    gap: tokens.spacingHorizontalS,
+  },
+  containerAfter: {
+    background: tokens.colorBrandBackground2Pressed,
+    borderRadius: "2px",
+    bottom: "0",
+    content: "",
+    left: "10px",
+    // position: "absolute",
+    top: "0",
+    transition: "0.3s",
+    width: "4px",
+    ":hover": {
+      background: tokens.colorBrandBackground,
+    },
   },
 });
 
@@ -67,20 +95,15 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
   const { showNotification } = useNotification();
 
   const queryClient = useQueryClient();
-  const aiFileQuery = useQuery({
-    queryKey: [`aifilesAdd_${itemId}`],
-    queryFn: () => aiFileSimpleList(itemId),
-    staleTime: 0,
-  });
-
-  const aiPlanTemplateQuery = useQuery({
-    queryKey: [`aiPlanTemplate_${itemId}`],
-    queryFn: () => aiPlanTemplateList(itemId),
-    staleTime: 0,
-  });
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [useTemplate, setUseTemplate] = React.useState(false);
+  const [template, setTemplate] = React.useState<{
+    args: ArgData[];
+    startup: StartupData;
+  }>();
+  const [submiting, setSubmiting] = React.useState(false);
   const [args, setArgs] = React.useState<ArgData[]>([]);
+  const [files, setFiles] = React.useState<AiModelFile[]>([]);
   const defaultAiModelPlan: {
     name: string;
     startup: StartupData;
@@ -104,8 +127,8 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
         },
       });
       setArgs([]);
-    } else if (aiPlanTemplateQuery.data?.data) {
-      const { args, startup } = aiPlanTemplateQuery.data.data;
+    } else if (template) {
+      const { args, startup } = template;
       setFormData({
         ...formData,
         ["startup"]: startup,
@@ -116,6 +139,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
   };
   const handleSubmit = (ev: React.FormEvent) => {
     const { name, startup, requirements } = formData;
+    setSubmiting(true);
     aiPlanCreate(itemId, {
       name: name,
       startup: startup.value,
@@ -142,9 +166,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
         showNotification(reason.message, "error");
       });
     ev.preventDefault();
-  };
-  const handleDeleteArg = (id: number) => {
-    setArgs((prevArgs) => prevArgs.filter((arg) => arg.id !== id));
+    setSubmiting(false);
   };
   const handleAddArg = () => {
     const c = args.length > 0 ? args[args.length - 1].id + 1 : 1;
@@ -178,39 +200,41 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
       [name]: vData,
     });
   };
-  const handleArgValueChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
-  ) => {
-    handleArgChange(ev, data, "value");
-  };
-  const handleArgNameChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
-  ) => {
-    handleArgChange(ev, data, "name");
-  };
 
-  const handleArgChange = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData,
-    argName: string
-  ) => {
-    const { name } = ev.target;
-    const targetId = Number(name);
-    setArgs((prevArgs) =>
-      prevArgs.map((arg) =>
-        arg.id === targetId ? { ...arg, [argName]: data.value } : arg
-      )
-    );
+  const start = () => {
+    aiPlanTemplateList(itemId)
+      .then((resp) => {
+        if (resp.code === 200 && resp.data) {
+          setTemplate({
+            args: resp.data.args,
+            startup: resp.data.startup,
+          });
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
+    aiFileSimpleList(itemId)
+      .then((resp) => {
+        if (resp.code === 200 && resp.data) {
+          setFiles(resp.data);
+        } else {
+          showNotification(resp.msg, "error");
+        }
+      })
+      .catch((reason: Error) => {
+        showNotification(reason.message, "error");
+      });
   };
-
   return (
     <Dialog modalType="modal" open={dialogOpen}>
       <DialogTrigger disableButtonEnhancement>
         <ToolbarButton
           onClick={() => {
             setDialogOpen(true);
+            start();
           }}
           icon={<AddButtonIcon />}
         >
@@ -236,7 +260,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
               <InfoLabel
                 required
                 htmlFor={"startup"}
-                info="使用{命令参数名称}来使用命令参数"
+                info="使用${参数名称}来使用脚本参数"
               >
                 脚本
               </InfoLabel>
@@ -250,88 +274,30 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                 onChange={handleChange}
                 id={"startup"}
               />
-              <Label htmlFor={"args"}>脚本参数</Label>
-              {args.map((item) => (
-                <div key={item.id} className={styles.args}>
-                  {item.info && <InfoLabel info={item.info} />}
-                  <div style={{ position: "relative", minWidth: "80px" }}>
-                    <Input
-                      disabled={!item.allow_modify}
-                      required
-                      style={{ minWidth: "80px", maxWidth: "80px" }}
-                      value={item.name}
-                      name={`${item.id}`}
-                      onChange={handleArgNameChange}
-                    />
+              <InfoLabel
+                required
+                htmlFor={"args"}
+                info={
+                  <div>
+                    若使用请添加
+                    <div>{"environment {"}</div>
+                    <div>{"#CUSTOM_ENV_ARGS#"}</div>
+                    <div>{"}"}</div>
                   </div>
-
-                  <Select
-                    disabled={!item.allow_modify}
-                    onChange={(_event, data) => {
-                      setArgs((prevArgs) =>
-                        prevArgs.map((arg) =>
-                          arg.id === item.id
-                            ? {
-                                ...arg,
-                                ["type"]:
-                                  data.value === "file" ? "file" : "string",
-                              }
-                            : arg
-                        )
-                      );
-                    }}
-                    value={item.type || "string"}
-                    style={{ minWidth: "80px", maxWidth: "80px" }}
-                  >
-                    <option key="string" value="string">
-                      字符
-                    </option>
-                    <option key="file" value="file">
-                      文件
-                    </option>
-                  </Select>
-                  {item.type == "string" ? (
-                    <Input
-                      style={{ width: "100%" }}
-                      required
-                      name={`${item.id}`}
-                      value={item.value}
-                      onChange={handleArgValueChange}
-                    />
-                  ) : (
-                    <Combobox
-                      value={item.value || ""}
-                      onOptionSelect={(_e, data) => {
-                        setArgs((prevArgs) =>
-                          prevArgs.map((arg) =>
-                            arg.id === item.id
-                              ? {
-                                  ...arg,
-                                  ["value"]: data.optionText ?? "",
-                                }
-                              : arg
-                          )
-                        );
-                      }}
-                      style={{ width: "100%" }}
-                    >
-                      {aiFileQuery.data?.data?.map((fileItem) => (
-                        <Option
-                          key={fileItem.id}
-                          value={`#${fileItem.id}`}
-                          checkIcon={<CheckmarkCircleRegular />}
-                        >{`${fileItem.file_name} #${fileItem.id}`}</Option>
-                      ))}
-                    </Combobox>
-                  )}
-
-                  <Button
-                    disabled={!item.allow_modify}
-                    icon={<DeleteDismissIcon />}
-                    onClick={() => handleDeleteArg(item.id)}
-                  ></Button>
-                </div>
-              ))}
+                }
+              >
+                脚本参数
+              </InfoLabel>
+              <div className={styles.containerTop}>
+                {args.map((item) => (
+                  <CustomArg
+                    key={item.id}
+                    item={item}
+                    files={files}
+                    setArgs={setArgs}
+                  ></CustomArg>
+                ))}
+              </div>
               <Button onClick={handleAddArg}>新增参数</Button>
             </DialogContent>
 
@@ -349,8 +315,8 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                   取消
                 </Button>
               </DialogTrigger>
-              <Button type="submit" appearance="primary">
-                提交
+              <Button type="submit" disabled={submiting} appearance="primary">
+                {submiting ? "提交中" : "提交"}
               </Button>
             </DialogActions>
           </DialogBody>
