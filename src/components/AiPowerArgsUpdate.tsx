@@ -25,6 +25,8 @@ import {
   DeleteDismissRegular,
   SettingsFilled,
   SettingsRegular,
+  InfoFilled,
+  InfoRegular,
 } from "@fluentui/react-icons";
 import { ChangeEvent } from "react";
 import { useNotification } from "../utils/notification/Notification";
@@ -34,6 +36,7 @@ import { ArgData } from "../utils/api/models/PlanTemplate";
 import { aiPowerArgs, aiPowerArgsUpdate } from "../utils/api/AiModelPower";
 import { ModelId } from "../utils/api/models/Base";
 const SettingsIcon = bundleIcon(SettingsFilled, SettingsRegular);
+const InfoIcon = bundleIcon(InfoFilled, InfoRegular);
 const DeleteDismissIcon = bundleIcon(DeleteDismissFilled, DeleteDismissRegular);
 const useStyles = makeStyles({
   content: {
@@ -160,6 +163,7 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
               <Label htmlFor={"args"}>配置参数</Label>
               {args.map((item) => (
                 <div key={item.id} className={styles.args}>
+                  {item.info && <InfoLabel info={item.info} />}
                   <div style={{ position: "relative", minWidth: "80px" }}>
                     <Input
                       disabled={!item.allow_modify}
@@ -169,17 +173,6 @@ export const AiPowerArgsUpdate: React.FC<AiPowerArgsUpdateProps> = ({
                       name={`${item.id}`}
                       onChange={handleArgNameChange}
                     />
-                    {item.info && (
-                      <InfoLabel
-                        info={item.info}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          zIndex: 5,
-                        }}
-                      />
-                    )}
                   </div>
 
                   <Select

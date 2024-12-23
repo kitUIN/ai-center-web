@@ -53,10 +53,10 @@ const useStyles = makeStyles({
     display: "flex",
     gap: "4px",
   },
-  textArea:{
-    minHeight:"200px",
-    fontSize:"12px"
-  }
+  textArea: {
+    minHeight: "200px",
+    fontSize: "12px",
+  },
 });
 
 interface AiModelPlanAddProps {
@@ -132,7 +132,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
           setDialogOpen(false);
           setFormData(defaultAiModelPlan);
           setArgs([]);
-          setUseTemplate(false)
+          setUseTemplate(false);
           queryClient.refetchQueries({ queryKey: ["aiPlans"], exact: true });
         } else {
           showNotification(resp.msg, "error");
@@ -160,7 +160,7 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
     ]);
   };
   const handleChange = (
-    ev: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,
+    ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     data: InputOnChangeData | TextareaOnChangeData
   ) => {
     const { name } = ev.target;
@@ -240,15 +240,20 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
               >
                 脚本
               </InfoLabel>
-              <Textarea resize="vertical"    disabled={!formData.startup.allow_modify}
-                required  textarea={{ className: styles.textArea }}
+              <Textarea
+                resize="vertical"
+                disabled={!formData.startup.allow_modify}
+                required
+                textarea={{ className: styles.textArea }}
                 name="startup"
                 value={formData.startup.value}
                 onChange={handleChange}
-                id={"startup"}/>
+                id={"startup"}
+              />
               <Label htmlFor={"args"}>脚本参数</Label>
               {args.map((item) => (
                 <div key={item.id} className={styles.args}>
+                  {item.info && <InfoLabel info={item.info} />}
                   <div style={{ position: "relative", minWidth: "80px" }}>
                     <Input
                       disabled={!item.allow_modify}
@@ -258,17 +263,6 @@ export const AiModelPlanAdd: React.FC<AiModelPlanAddProps> = ({ itemId }) => {
                       name={`${item.id}`}
                       onChange={handleArgNameChange}
                     />
-                    {item.info && (
-                      <InfoLabel
-                        info={item.info}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                          zIndex: 5,
-                        }}
-                      />
-                    )}
                   </div>
 
                   <Select
